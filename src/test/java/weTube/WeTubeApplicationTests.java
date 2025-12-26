@@ -1,4 +1,4 @@
-package com.example.wetube;
+package weTube;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
