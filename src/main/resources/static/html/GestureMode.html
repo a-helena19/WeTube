@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WeTube — Gesture Mode</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-mode="gesture">
+
+<header class="topbar">
+    <div class="brand">
+        <span class="logo">▶</span>
+        <span class="name">WeTube</span>
+    </div>
+
+    <div class="search">
+        <input type="search" placeholder="Search" />
+        <button aria-label="Search">🔎</button>
+    </div>
+
+    <a class="modePill active" href="/gesture.html">Gesture Mode</a>
+</header>
+
+<main class="layout">
+    <section class="left">
+        <div class="playerCard">
+            <video id="player" controls playsinline></video>
+        </div>
+
+        <div class="meta">
+            <h1 id="title">Loading…</h1>
+            <div class="sub">
+                <span id="channel"></span>
+                <span class="dot">•</span>
+                <span id="views"></span>
+                <span class="dot">•</span>
+                <span id="published"></span>
+            </div>
+        </div>
+
+        <section class="recs">
+            <div id="grid" class="grid"></div>
+        </section>
+    </section>
+
+    <aside class="right">
+        <div class="panelHeader danger">
+            <div>
+                <div class="panelTitle">Gesture Controls Active</div>
+                <div class="panelDesc">
+                    Use hand gestures to control the video player
+                </div>
+            </div>
+            <a href="/cursor.html" class="btn dangerBtn">
+                Activate Cursor Mode
+            </a>
+        </div>
+
+        <div class="panelBody">
+            <div class="row head">
+                <span>Available Gestures</span>
+                <span>Action</span>
+            </div>
+
+            <div class="row"><span>Open Hand</span><span class="action">Play / Pause</span></div>
+            <div class="row"><span>Point Right (2 fingers)</span><span class="action">Next Video</span></div>
+            <div class="row"><span>Point Left (2 fingers)</span><span class="action">Last Video</span></div>
+            <div class="row"><span>Pinch Left</span><span class="action">Rewind −15s</span></div>
+            <div class="row"><span>Pinch Right</span><span class="action">Forward +15s</span></div>
+            <div class="row"><span>Thumb Up</span><span class="action">Volume Up</span></div>
+            <div class="row"><span>Thumb Down</span><span class="action">Volume Down</span></div>
+            <div class="row"><span>Point Up</span><span class="action">Activate Cursor Mode</span></div>
+            <div class="row"><span>Victory</span><span class="action">Fullscreen</span></div>
+            <div class="row"><span>OK Sign</span><span class="action">Restart Video</span></div>
+        </div>
+    </aside>
+</main>
+
+<script src="/app.js"></script>
+<script src="/modes.js"></script>
+</body>
+</html>

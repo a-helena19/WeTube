@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WeTube — Cursor Mode</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-mode="cursor">
+
+<header class="topbar">
+    <div class="brand">
+        <span class="logo">▶</span>
+        <span class="name">WeTube</span>
+    </div>
+
+    <div class="search">
+        <input type="search" placeholder="Search" />
+        <button aria-label="Search">🔎</button>
+    </div>
+
+    <a class="modePill purple active" href="/cursor.html">Cursor Mode</a>
+</header>
+
+<main class="layout">
+    <section class="left">
+        <div class="playerCard">
+            <video id="player" controls playsinline></video>
+        </div>
+
+        <div class="meta">
+            <h1 id="title">Cursor Mode Active</h1>
+            <div class="sub">
+                Control the interface using pointing gestures
+            </div>
+        </div>
+
+        <section class="recs">
+            <div id="grid" class="grid"></div>
+        </section>
+    </section>
+
+    <aside class="right">
+        <div class="panelHeader purple">
+            <div>
+                <div class="panelTitle">Pointing Mode</div>
+                <div class="panelDesc">
+                    Control the UI with your index finger
+                </div>
+            </div>
+            <span class="tag">Cursor Mode</span>
+        </div>
+
+        <div class="panelBody">
+            <div class="steps">
+                <div class="step">
+                    <div class="num">1</div>
+                    <div>
+                        <div class="stepTitle">Point your finger</div>
+                        <div class="stepDesc">
+                            Extend your index finger and point at the screen
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="num">2</div>
+                    <div>
+                        <div class="stepTitle">Move to control cursor</div>
+                        <div class="stepDesc">
+                            The cursor follows your finger position
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="num">3</div>
+                    <div>
+                        <div class="stepTitle">Pinch to select</div>
+                        <div class="stepDesc">
+                            Pinch hand to “click”
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="num">4</div>
+                    <div>
+                        <div class="stepTitle">Make fist to exit</div>
+                        <div class="stepDesc">
+                            Close your hand to return to Gesture Mode
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/gesture.html" class="btn ghost">
+                End Cursor Mode
+            </a>
+        </div>
+    </aside>
+</main>
+
+<div class="cursorDot"></div>
+
+<script src="/app.js"></script>
+<script src="/modes.js"></script>
+</body>
+</html>
