@@ -1,4 +1,5 @@
 import {
+    GestureRecognizer,
     HandLandmarker,
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs";
@@ -21,6 +22,16 @@ async function init() {
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
     );
 
+    /* ---------- Gesture Recognizer ---------- */
+    const gestureRecognizer = await GestureRecognizer.createFromOptions(fileset, {
+        baseOptions: {
+            modelAssetPath:
+                "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task"
+        },
+        runningMode: "VIDEO"
+    });
+
+    /* ---------- Hand Landmarker ---------- */
     const handLandmarker = await HandLandmarker.createFromOptions(fileset, {
         baseOptions: {
             modelAssetPath:
@@ -37,17 +48,42 @@ async function init() {
     gestureDiv.textContent = "🖐️ Hand zeigen";
 
     function loop() {
-        const result = handLandmarker.detectForVideo(video, performance.now());
+        const now = performance.now();
+        let detectedGesture = null;
 
-        if (result.landmarks.length > 0) {
-            const lm = result.landmarks[0];
-            const fingers = getFingerStates(lm);
-            const gesture = detectGesture(lm, fingers);
+        /* ---------- 1️⃣ Gesture Recognizer ---------- */
+        const gResult = gestureRecognizer.recognizeForVideo(video, now);
 
-            if (gesture && isStable(gesture)) {
-                gestureDiv.textContent = `🎯 ${gesture}`;
+        if (gResult.gestures?.length) {
+            const g = gResult.gestures[0][0];
+            const name = g.categoryName;
+
+            // ❗ WICHTIG: None / Unknown ignorieren
+            if (name !== "None" && name !== "Unknown") {
+                detectedGesture = `🤖 ${name}`;
             }
-        } else {
+        }
+
+        /* ---------- 2️⃣ Hand Landmarker (IMMER!) ---------- */
+        const hResult = handLandmarker.detectForVideo(video, now);
+
+        if (hResult.landmarks.length > 0) {
+            const lm = hResult.landmarks[0];
+            const fingers = getFingerStates(lm);
+            const customGesture = detectCustomGesture(lm, fingers);
+
+            // Custom-Gesten überschreiben GR nur, wenn sie existieren
+            if (customGesture) {
+                detectedGesture = `🧠 ${customGesture}`;
+            }
+        }
+
+        /* ---------- 3️⃣ Anzeige ---------- */
+        if (detectedGesture && isStable(detectedGesture)) {
+            gestureDiv.textContent = detectedGesture;
+        }
+
+        if (!hResult.landmarks.length && !gResult.gestures?.length) {
             gestureDiv.textContent = "❌ Keine Hand";
             resetStability();
         }
@@ -78,26 +114,25 @@ function getFingerStates(lm) {
 }
 
 /* =======================
-   GESTURE DETECTION
+   CUSTOM GESTURES
 ======================= */
-function detectGesture(lm, f) {
+function detectCustomGesture(lm, f) {
 
-    if (isOpenHand(f)) return "Open Hand";
-    if (isFist(f)) return "Fist";
-    if (isVictory(f)) return "Victory";
-    if (isThumbUp(lm, f)) return "Thumb Up";
-    if (isThumbDown(lm, f)) return "Thumb Down";
+    // 👉 Two Finger Direction
+    if (f.index && f.middle && !f.ring && !f.pinky) {
+        return lm[8].x > lm[12].x
+            ? "Two Fingers Left"
+            : "Two Fingers Right";
+    }
 
-    const dir = twoFingerDirection(f, lm);
-    if (dir === "LEFT") return "Two Fingers Left";
-    if (dir === "RIGHT") return "Two Fingers Right";
-
+    // 🤏 Pinch Left / Right
     if (isPinch(lm)) {
         return lm[4].x < 0.5 ? "Pinch Left" : "Pinch Right";
     }
 
+    // ☝ Index Finger
     if (f.index && !f.middle && !f.ring && !f.pinky) {
-        return "Point (Index Finger)";
+        return "Point (Index)";
     }
 
     return null;
@@ -106,35 +141,6 @@ function detectGesture(lm, f) {
 /* =======================
    HELPERS
 ======================= */
-function isOpenHand(f) {
-    return f.thumb && f.index && f.middle && f.ring && f.pinky;
-}
-
-function isFist(f) {
-    return !f.thumb && !f.index && !f.middle && !f.ring && !f.pinky;
-}
-
-function isVictory(f) {
-    return !f.thumb && f.index && f.middle && !f.ring && !f.pinky;
-}
-
-function isThumbUp(lm, f) {
-    return f.thumb && !f.index && !f.middle &&
-        lm[4].y < lm[0].y;
-}
-
-function isThumbDown(lm, f) {
-    return f.thumb && !f.index && !f.middle &&
-        lm[4].y > lm[0].y;
-}
-
-function twoFingerDirection(f, lm) {
-    if (f.index && f.middle && !f.ring && !f.pinky) {
-        return lm[8].x > lm[12].x ? "LEFT" : "RIGHT";
-    }
-    return null;
-}
-
 function isPinch(lm) {
     const d = Math.hypot(
         lm[4].x - lm[8].x,
@@ -144,7 +150,7 @@ function isPinch(lm) {
 }
 
 /* =======================
-   STABILITY HELPERS
+   STABILITY
 ======================= */
 function isStable(gesture) {
     if (gesture === lastGesture) {
