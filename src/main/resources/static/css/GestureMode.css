@@ -1,4 +1,5 @@
 /* Global Styles */
+/*
 body {
     margin: 0;
     padding: 0;
@@ -83,7 +84,6 @@ body {
     color: #008236;
 }
 
-/* Main Content */
 .content {
     display: flex;
     padding: 16px;
@@ -127,7 +127,6 @@ body {
     color: #606060;
 }
 
-/* Gesture Controls */
 .gesture-description {
     width: 30%;
     padding: 16px;
@@ -167,3 +166,5 @@ body {
     flex-direction: column;
     gap: 8px;
 }
+
+/*

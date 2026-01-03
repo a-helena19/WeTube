@@ -1,3 +1,4 @@
+let videos = [];
 const API = "/api/videos"; // change if needed
 
 const player = document.getElementById("player");
@@ -8,6 +9,36 @@ const channelEl = document.getElementById("channel");
 const viewsEl = document.getElementById("views");
 const publishedEl = document.getElementById("published");
 
+
+const videoDataElement = document.getElementById('videoData');
+if (videoDataElement) {
+    try {
+        videos = JSON.parse(videoDataElement.textContent);
+        initializePlayer();
+    } catch(e) {
+        console.error("Could not parse video data", e);
+        // Fallback to API
+        fetchAPI();
+    }
+} else {
+    fetchAPI();
+}
+
+function initializePlayer() {
+    if (!videos.length) return;
+    setVideo(videos[0]);
+    renderGrid(videos.slice(1));
+}
+
+function fetchAPI() {
+    fetch("/api/videos")
+        .then(r => r.json())
+        .then(data => {
+            videos = data;
+            initializePlayer();
+        })
+        .catch(console.error);
+}
 function fmtViews(v){
     if (v >= 1e6) return (v/1e6).toFixed(1)+"M views";
     if (v >= 1e3) return Math.round(v/1e3)+"K views";

@@ -16,6 +16,6 @@ public class GestureModeController {
     @GetMapping("/gesture-mode")
     public String showGestureModePage(Model model) {
         model.addAttribute("videos", videoService.findAll());
-        return "GestureMode";
+        return "GestureMode"; // This should match the template name exactly
     }
 }

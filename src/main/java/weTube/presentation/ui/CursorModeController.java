@@ -14,9 +14,8 @@ public class CursorModeController {
         this.videoService = videoService;
     }
     @GetMapping("/cursor-mode")
-
     public String showCursorModePage(Model model) {
         model.addAttribute("videos", videoService.findAll());
-        return "CursorMode";
+        return "CursorMode"; // This should match the template name exactly
     }
 }

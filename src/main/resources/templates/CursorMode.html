@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>WeTube — Cursor Mode</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <title>WeTube — Gesture Mode</title>
+    <!-- Change this from styles.css to the actual CSS file you have -->
+    <link rel="stylesheet" th:href="@{/styles.css}" />
 </head>
 <body data-mode="cursor">
 
@@ -19,7 +20,7 @@
         <button aria-label="Search">🔎</button>
     </div>
 
-    <a class="modePill purple active" href="/cursor.html">Cursor Mode</a>
+    <a class="modePill purple active" th:href="@{/cursor-mode}">Cursor Mode</a>
 </header>
 
 <main class="layout">
@@ -78,7 +79,7 @@
                     <div>
                         <div class="stepTitle">Pinch to select</div>
                         <div class="stepDesc">
-                            Pinch hand to “click”
+                            Pinch hand to "click"
                         </div>
                     </div>
                 </div>
@@ -94,7 +95,7 @@
                 </div>
             </div>
 
-            <a href="/gesture.html" class="btn ghost">
+            <a th:href="@{/gesture-mode}" class="btn ghost">
                 End Cursor Mode
             </a>
         </div>
@@ -103,7 +104,11 @@
 
 <div class="cursorDot"></div>
 
-<script src="/app.js"></script>
-<script src="/modes.js"></script>
+<script th:inline="javascript">
+    const videos = /*[[${videos}]]*/ [];
+</script>
+
+<script th:src="@{/app.js}"></script>
+<script th:src="@{/modes.js}"></script>
 </body>
 </html>
