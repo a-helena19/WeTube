@@ -25,36 +25,27 @@ body {
 .logo-section {
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-.logo-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 24px;
-    height: 24px;
-    background-color: red;
+.logo {
+    width: 120px;
+    height: auto;
 }
 
-.youtube-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #0A0A0A;
-}
-
+/* Search Bar */
 .search-bar {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-grow: 1;
+    width: 50%;
 }
 
 .search-input {
-    width: 300px;
+    flex-grow: 1;
     padding: 8px;
     border: 1px solid #D1D5DC;
     border-radius: 20px 0 0 20px;
+    width: 100%;
 }
 
 .search-button {
@@ -65,6 +56,7 @@ body {
     height: 36px;
     background-color: #E5E7EB;
     border-radius: 0 20px 20px 0;
+    cursor: pointer;
 }
 
 .search-icon {
@@ -73,6 +65,7 @@ body {
     background-color: #0F0F0F;
 }
 
+/* Gesture Badge */
 .gesture-badge {
     display: flex;
     align-items: center;
@@ -86,34 +79,35 @@ body {
 /* Main Content */
 .content {
     display: flex;
-    padding: 16px;
-    gap: 16px;
+    justify-content: space-between;
+    padding: 32px;
+    gap: 32px;
 }
 
 .video-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
     width: 70%;
 }
 
 .video-card {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    width: 300px;
+    gap: 16px;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .thumbnail {
-    border-radius: 8px;
     width: 100%;
+    border-radius: 8px 8px 0 0;
 }
 
 .video-info {
-    padding: 8px;
+    padding: 16px;
 }
 
 .video-title {
@@ -127,43 +121,37 @@ body {
     color: #606060;
 }
 
-/* Gesture Controls */
+/* Gesture Section */
 .gesture-description {
+    background-color: #FEF2F2;
     width: 30%;
     padding: 16px;
-    background-color: #FEF2F2;
     border-radius: 16px;
-    border: 1px solid #FFC9C9;
 }
 
 .gesture-heading {
     font-size: 18px;
     font-weight: bold;
     color: #DC2626;
-    margin-bottom: 8px;
-}
-
-.gesture-text {
-    font-size: 14px;
-    color: #E7000B;
     margin-bottom: 16px;
 }
 
-.activate-mode {
+.gesture-text, .gesture-steps {
+    font-size: 14px;
+}
+
+.activate-mode, .end-cursor-mode {
+    display: block;
     width: 100%;
-    padding: 8px;
+    padding: 12px;
+    margin-top: 16px;
     background-color: #E7000B;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    margin-bottom: 16px;
 }
 
-.available-gestures {
-    font-size: 14px;
-    color: #364153;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.hidden {
+    display: none; /* Elemente vorübergehend verstecken */
 }
