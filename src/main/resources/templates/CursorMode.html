@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>WeTube — Gesture Mode</title>
-    <!-- Change this from styles.css to the actual CSS file you have -->
-    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <title>WeTube — Cursor Mode</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body data-mode="cursor">
 
@@ -30,13 +29,19 @@
         </div>
 
         <div class="meta">
-            <h1 id="title">Cursor Mode Active</h1>
+            <!-- FIXED: Added the same structure as GestureMode.html -->
+            <h1 id="title">Loading…</h1>
             <div class="sub">
-                Control the interface using pointing gestures
+                <span id="channel"></span>
+                <span class="dot">•</span>
+                <span id="views"></span>
+                <span class="dot">•</span>
+                <span id="published"></span>
             </div>
         </div>
 
         <section class="recs">
+            <h2>Recommended Videos</h2>
             <div id="grid" class="grid"></div>
         </section>
     </section>
@@ -95,7 +100,7 @@
                 </div>
             </div>
 
-            <a th:href="@{/gesture-mode}" class="btn ghost">
+            <a th:href="@{/gesture-mode}" class="btn ghost" style="margin: 12px; display: block; text-align: center;">
                 End Cursor Mode
             </a>
         </div>
@@ -104,8 +109,11 @@
 
 <div class="cursorDot"></div>
 
+<!-- FIXED: Proper script tag for inline JavaScript -->
 <script th:inline="javascript">
+    /*<![CDATA[*/
     const videos = /*[[${videos}]]*/ [];
+    /*]]>*/
 </script>
 
 <script th:src="@{/app.js}"></script>

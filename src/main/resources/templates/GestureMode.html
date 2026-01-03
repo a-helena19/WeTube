@@ -4,8 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WeTube — Gesture Mode</title>
-    <!-- Change this from styles.css to the actual CSS file you have -->
-    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body data-mode="gesture">
 
@@ -44,6 +43,7 @@
         </div>
 
         <section class="recs">
+            <h2>Recommended Videos</h2>
             <div id="grid" class="grid"></div>
         </section>
     </section>
@@ -81,8 +81,11 @@
     </aside>
 </main>
 
+<!-- FIXED: Proper script tag for inline JavaScript -->
 <script th:inline="javascript">
+    /*<![CDATA[*/
     const videos = /*[[${videos}]]*/ [];
+    /*]]>*/
 </script>
 
 <script th:src="@{/app.js}"></script>

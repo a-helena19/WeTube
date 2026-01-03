@@ -60,22 +60,14 @@ function renderGrid(videos){
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-      <img src="${v.thumbnailUrl}" style="width:100%;aspect-ratio:16/9;object-fit:cover">
-      <div style="padding:8px">
-        <div style="font-weight:700;font-size:14px">${v.title}</div>
-        <div style="font-size:12px;color:#6b7280">${v.channelName}</div>
-      </div>
-    `;
+            <img src="${v.thumbnailUrl}" alt="${v.title}">
+            <div>
+                <div class="cardTitle">${v.title}</div>
+                <div class="cardSub">${v.channelName}</div>
+            </div>
+        `;
         card.onclick = () => setVideo(v);
         grid.appendChild(card);
     });
 }
 
-fetch(API)
-    .then(r => r.json())
-    .then(videos => {
-        if (!videos.length) return;
-        setVideo(videos[0]);
-        renderGrid(videos.slice(1));
-    })
-    .catch(console.error);
