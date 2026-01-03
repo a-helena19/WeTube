@@ -1,45 +1,162 @@
 import {
-    GestureRecognizer,
+    HandLandmarker,
     FilesetResolver
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9";
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs";
 
-const video = document.getElementById('video');
-const gestureDisplay = document.getElementById('gesture');
+const video = document.getElementById("video");
+const gestureDiv = document.getElementById("gesture");
 
-async function initMediaPipe() {
-    // Files laden
+/* =======================
+   STABILITY
+======================= */
+let lastGesture = null;
+let stableFrames = 0;
+
+/* =======================
+   INIT
+======================= */
+async function init() {
+
     const fileset = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
     );
 
-    const gestureRecognizer = await GestureRecognizer.createFromOptions(fileset, {
+    const handLandmarker = await HandLandmarker.createFromOptions(fileset, {
         baseOptions: {
             modelAssetPath:
-                "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task"
+                "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
         },
         runningMode: "VIDEO",
+        numHands: 1
     });
 
-    // Kamera starten
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     await video.play();
 
-    // Loop
-    function detect() {
-        const result = gestureRecognizer.recognizeForVideo(video, performance.now());
+    gestureDiv.textContent = "🖐️ Hand zeigen";
 
-        if (result?.gestures?.length) {
-            const gesture = result.gestures[0][0];
-            gestureDisplay.textContent = `🎯 ${gesture.categoryName} (${(gesture.score * 100).toFixed(0)}%)`;
+    function loop() {
+        const result = handLandmarker.detectForVideo(video, performance.now());
+
+        if (result.landmarks.length > 0) {
+            const lm = result.landmarks[0];
+            const fingers = getFingerStates(lm);
+            const gesture = detectGesture(lm, fingers);
+
+            if (gesture && isStable(gesture)) {
+                gestureDiv.textContent = `🎯 ${gesture}`;
+            }
         } else {
-            gestureDisplay.textContent = "Keine Geste erkannt";
+            gestureDiv.textContent = "❌ Keine Hand";
+            resetStability();
         }
 
-        requestAnimationFrame(detect);
+        requestAnimationFrame(loop);
     }
 
-    detect();
+    loop();
 }
 
-window.addEventListener('load', initMediaPipe);
+init();
+
+/* =======================
+   FINGER STATES
+======================= */
+function fingerUp(lm, tip, pip) {
+    return lm[tip].y < lm[pip].y;
+}
+
+function getFingerStates(lm) {
+    return {
+        thumb:  fingerUp(lm, 4, 3),
+        index:  fingerUp(lm, 8, 6),
+        middle: fingerUp(lm, 12,10),
+        ring:   fingerUp(lm, 16,14),
+        pinky:  fingerUp(lm, 20,18),
+    };
+}
+
+/* =======================
+   GESTURE DETECTION
+======================= */
+function detectGesture(lm, f) {
+
+    if (isOpenHand(f)) return "Open Hand";
+    if (isFist(f)) return "Fist";
+    if (isVictory(f)) return "Victory";
+    if (isThumbUp(lm, f)) return "Thumb Up";
+    if (isThumbDown(lm, f)) return "Thumb Down";
+
+    const dir = twoFingerDirection(f, lm);
+    if (dir === "LEFT") return "Two Fingers Left";
+    if (dir === "RIGHT") return "Two Fingers Right";
+
+    if (isPinch(lm)) {
+        return lm[4].x < 0.5 ? "Pinch Left" : "Pinch Right";
+    }
+
+    if (f.index && !f.middle && !f.ring && !f.pinky) {
+        return "Point (Index Finger)";
+    }
+
+    return null;
+}
+
+/* =======================
+   HELPERS
+======================= */
+function isOpenHand(f) {
+    return f.thumb && f.index && f.middle && f.ring && f.pinky;
+}
+
+function isFist(f) {
+    return !f.thumb && !f.index && !f.middle && !f.ring && !f.pinky;
+}
+
+function isVictory(f) {
+    return !f.thumb && f.index && f.middle && !f.ring && !f.pinky;
+}
+
+function isThumbUp(lm, f) {
+    return f.thumb && !f.index && !f.middle &&
+        lm[4].y < lm[0].y;
+}
+
+function isThumbDown(lm, f) {
+    return f.thumb && !f.index && !f.middle &&
+        lm[4].y > lm[0].y;
+}
+
+function twoFingerDirection(f, lm) {
+    if (f.index && f.middle && !f.ring && !f.pinky) {
+        return lm[8].x > lm[12].x ? "LEFT" : "RIGHT";
+    }
+    return null;
+}
+
+function isPinch(lm) {
+    const d = Math.hypot(
+        lm[4].x - lm[8].x,
+        lm[4].y - lm[8].y
+    );
+    return d < 0.04;
+}
+
+/* =======================
+   STABILITY HELPERS
+======================= */
+function isStable(gesture) {
+    if (gesture === lastGesture) {
+        stableFrames++;
+    } else {
+        lastGesture = gesture;
+        stableFrames = 0;
+    }
+    return stableFrames > 5;
+}
+
+function resetStability() {
+    lastGesture = null;
+    stableFrames = 0;
+}
