@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class CursorModeController {
+public class VideoController {
 
-    @GetMapping("/cursor-mode")
-    public ModelAndView showCursorModePage() {
-        return new ModelAndView("CursorMode");
+    @GetMapping("/video")
+    public ModelAndView showHomePage() {
+        return new ModelAndView("video");
     }
 }
