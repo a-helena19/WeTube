@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modeBadge) {
             modeBadge.className = "pointing-badge";
-            modeBadge.innerHTML = '<span>Pointing Mode</span>';
+            modeBadge.innerHTML = '<span>Cursor Mode</span>';
         }
     }
 
