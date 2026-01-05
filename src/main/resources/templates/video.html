@@ -30,15 +30,18 @@
         <!-- LEFT COLUMN: Video Player and Video Grid -->
         <div class="left-column">
             <section class="video-player">
-                <iframe
+                <video
+                        id="main-video"
                         width="100%"
                         height="360"
-                        src="https://www.youtube.com/embed/JHdD2shVBAA"
-                        title="Smartphone Awards 2022"
-                        frameborder="0"
-                        allowfullscreen>
-                </iframe>
-                <h3 class="video-title-large">Smartphone Awards 2022!</h3>
+                        controls
+                        autoplay
+                        muted
+                        playsinline>
+                    <source src="https://res.cloudinary.com/dflbgeyli/video/upload/v1766774171/Alphabet_Video_in_Light_Blue_Green_Orange_Bold_Poppy_Style_iyvzkl.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <h3 class="video-title-large">The Alphabet, One Letter at a Time</h3>
                 <p class="video-details-large">Marques Brownlee • 4.7M views • 2 months ago</p>
             </section>
 
