@@ -21,56 +21,61 @@
                 <div class="search-icon"></div>
             </button>
         </div>
-        <div class="gesture-badge">
-            <span class="gesture-text">Gesture Mode</span>
+        <div class="gesture-badge" id="mode-badge">
+            <span>Gesture Mode</span>
         </div>
     </header>
 
     <main class="content">
-        <section class="video-player">
-            <iframe
-                    width="100%"
-                    height="360"
-                    src="https://www.youtube.com/embed/JHdD2shVBAA"
-                    title="Smartphone Awards 2022"
-                    frameborder="0"
-                    allowfullscreen>
-            </iframe>
-            <h3 class="video-title-large">Smartphone Awards 2022!</h3>
-            <p class="video-details-large">Marques Brownlee • 4.7M views • 2 months ago</p>
-        </section>
+        <!-- LEFT COLUMN: Video Player and Video Grid -->
+        <div class="left-column">
+            <section class="video-player">
+                <iframe
+                        width="100%"
+                        height="360"
+                        src="https://www.youtube.com/embed/JHdD2shVBAA"
+                        title="Smartphone Awards 2022"
+                        frameborder="0"
+                        allowfullscreen>
+                </iframe>
+                <h3 class="video-title-large">Smartphone Awards 2022!</h3>
+                <p class="video-details-large">Marques Brownlee • 4.7M views • 2 months ago</p>
+            </section>
 
-        <section class="video-grid">
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">New attack targets U.S. base in Syria following American airstrikes</h3>
-                    <p class="video-details">CBS News • 126K views • 2 hours ago</p>
+            <section class="video-grid">
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">New attack targets U.S. base in Syria following American airstrikes</h3>
+                        <p class="video-details">CBS News • 126K views • 2 hours ago</p>
+                    </div>
                 </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">[Playlist] Soothing 24-hour jazz music and rain sounds</h3>
-                    <p class="video-details">In The Rain • 2M views • 3 months ago</p>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">[Playlist] Soothing 24-hour jazz music and rain sounds</h3>
+                        <p class="video-details">In The Rain • 2M views • 3 months ago</p>
+                    </div>
                 </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">223 hours video.</h3>
-                    <p class="video-details">Dharkness • 8.4M views • 2 years ago</p>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">223 hours video.</h3>
+                        <p class="video-details">Dharkness • 8.4M views • 2 years ago</p>
+                    </div>
                 </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">Chill Lofi Beats 🌿 Lofi Deep Focus</h3>
-                    <p class="video-details">Chillhop Music • 36K views • 3 weeks ago</p>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">Chill Lofi Beats 🌿 Lofi Deep Focus</h3>
+                        <p class="video-details">Chillhop Music • 36K views • 3 weeks ago</p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+        <!-- END LEFT COLUMN -->
 
+        <!-- RIGHT SIDEBAR: Gesture Controls -->
         <aside class="gesture-description" id="sidebar">
             <div id="gesture-controls">
                 <h2 class="gesture-heading">Gesture Controls Active</h2>

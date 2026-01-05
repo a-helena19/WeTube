@@ -36,14 +36,18 @@ body {
     align-items: center;
     gap: 8px;
     width: 50%;
+    max-width: 600px;
 }
 
 .search-input {
     flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #D1D5DC;
-    border-radius: 20px 0 0 20px;
-    width: 100%;
+    outline: none;
+    padding: 10px 16px; /* Mehr padding */
+    border: 1px solid grey;
+    box-shadow: 0 0 0 3px rgba(231, 0, 11, 0.1);
+    border-radius: 24px 0 0 24px; /* Rundere Ecken */
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
 .search-button {
@@ -52,26 +56,32 @@ body {
     align-items: center;
     width: 36px;
     height: 36px;
-    background-color: #E5E7EB;
+    background-color: #E7000B;
     border-radius: 0 20px 20px 0;
     cursor: pointer;
 }
 
 .search-icon {
-    width: 18px;
-    height: 18px;
-    background-color: #0F0F0F;
+    width: 20px;
+    height: 20px;
+    background-color: #FFFFFF; /* Weiß statt Schwarz */
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
 }
 
 .gesture-badge {
+
     display: flex;
     align-items: center;
-    background-color: #F0FDF4;
-    padding: 8px 16px;
-    border: 1px solid #B9F8CF;
-    border-radius: 20px;
-    color: #008236;
-}
+    gap: 8px;
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    padding: 10px 18px;
+    border: 1px solid #FECACA;
+    border-radius: 24px;
+    color: #DC2626;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);}
 
 .content {
     display: flex;
@@ -118,10 +128,11 @@ body {
 }
 
 .gesture-description {
-    background-color: #FEF2F2;
     width: 30%;
-    padding: 16px;
+    padding: 0;
     border-radius: 16px;
+    background: none;
+    border: none;
 }
 
 .gesture-heading {
@@ -130,23 +141,90 @@ body {
     color: #DC2626;
     margin-bottom: 16px;
 }
-
 .gesture-text, .gesture-steps {
     font-size: 14px;
 }
+
+#gesture-controls {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 1px solid #FECACA;
+    border-radius: 16px;
+    padding: 16px;
+}
+
+
+
+/* Cursor Controls (LILA) */
+#cursor-controls {
+    background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
+    border: 1px solid #D8B4FE;
+    border-radius: 16px;
+    padding: 16px;
+}
+
+    .cursor-heading {
+        font-size: 18px;
+        font-weight: bold;
+        color: #7C3AED; /* LILA für Cursor */
+        margin-bottom: 16px;
+    }
 
 .activate-mode, .end-cursor-mode {
     display: block;
     width: 100%;
     padding: 12px;
     margin-top: 16px;
-    background-color: #E7000B;
+    background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
+    #activate-cursor-mode {
+        background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); /* ROT */
+    }
+
+    #end-cursor-mode {
+        background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); /* LILA */
+    }
+
+
+
+/* ab hier pointing mode */
+.pointing-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    padding: 10px 18px;
+    border: 1px solid #C4B5FD;
+    border-radius: 24px;
+    color: #7C3AED;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+}
+
+
 
 .hidden {
     display: none;
+}
+
+.gesture-badge,
+.pointing-badge {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.gesture-badge:hover,
+.pointing-badge:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.gesture-badge:active,
+.pointing-badge:active {
+    transform: scale(0.95);
 }
