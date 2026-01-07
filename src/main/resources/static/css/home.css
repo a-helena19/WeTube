@@ -42,10 +42,10 @@ body {
 .search-input {
     flex-grow: 1;
     outline: none;
-    padding: 10px 16px; /* Mehr padding */
+    padding: 10px 16px;
     border: 1px solid grey;
     box-shadow: 0 0 0 3px rgba(231, 0, 11, 0.1);
-    border-radius: 24px 0 0 24px; /* Rundere Ecken */
+    border-radius: 24px 0 0 24px;
     font-size: 14px;
     transition: all 0.2s ease;
 }
@@ -64,7 +64,7 @@ body {
 .search-icon {
     width: 20px;
     height: 20px;
-    background-color: #FFFFFF; /* Weiß statt Schwarz */
+    background-color: #FFFFFF;
     mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
     -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
 }
@@ -152,9 +152,6 @@ body {
     padding: 16px;
 }
 
-
-
-/* Cursor Controls (LILA) */
 #cursor-controls {
     background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
     border: 1px solid #D8B4FE;
@@ -165,7 +162,7 @@ body {
     .cursor-heading {
         font-size: 18px;
         font-weight: bold;
-        color: #7C3AED; /* LILA für Cursor */
+        color: #7C3AED;
         margin-bottom: 16px;
     }
 
@@ -181,16 +178,13 @@ body {
     cursor: pointer;
 }
     #activate-cursor-mode {
-        background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); /* ROT */
+        background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     }
 
     #end-cursor-mode {
-        background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); /* LILA */
+        background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
     }
 
-
-
-/* ab hier pointing mode */
 .pointing-badge {
     display: flex;
     align-items: center;

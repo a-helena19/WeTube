@@ -1,4 +1,3 @@
-/* Global Styles */
 body {
     margin: 0;
     padding: 0;
@@ -11,7 +10,6 @@ body {
     flex-direction: column;
 }
 
-/* Header */
 .header {
     display: flex;
     justify-content: space-between;
@@ -26,7 +24,6 @@ body {
     height: auto;
 }
 
-/* Search Bar - Matching home.css */
 .search-bar {
     display: flex;
     align-items: center;
@@ -68,7 +65,6 @@ body {
     -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
 }
 
-/* Gesture Badge - Fixed positioning and transitions */
 .gesture-badge, .pointing-badge {
     display: flex;
     align-items: center;
@@ -81,8 +77,8 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
-    white-space: nowrap; /* Prevents text wrapping */
-    flex-shrink: 0; /* Prevents badge from shrinking */
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .gesture-badge {
@@ -97,7 +93,6 @@ body {
     color: #7C3AED;
 }
 
-/* Hover Effects */
 .gesture-badge:hover, .pointing-badge:hover {
     opacity: 0.8;
     transform: scale(1.05);
@@ -107,7 +102,6 @@ body {
     transform: scale(0.95);
 }
 
-/* Main Content Layout */
 .content {
     display: flex;
     flex-direction: row;
@@ -119,7 +113,6 @@ body {
     width: 100%;
 }
 
-/* Left Column - Video Player and Grid */
 .left-column {
     flex: 1;
     display: flex;
@@ -127,7 +120,6 @@ body {
     gap: 32px;
 }
 
-/* Video Player */
 .video-player {
     width: 100%;
 }
@@ -144,7 +136,6 @@ body {
     color: #606060;
 }
 
-/* Video Grid - 2 columns as in image */
 .video-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -184,7 +175,6 @@ body {
     margin: 0;
 }
 
-/* Right Sidebar - Gesture Controls */
 .gesture-description {
     width: 400px;
     flex-shrink: 0;
@@ -226,7 +216,6 @@ body {
     line-height: 1.5;
 }
 
-/* Gesture List */
 .available-gestures {
     margin-top: 20px;
     padding-top: 16px;
@@ -245,7 +234,6 @@ body {
     color: #666;
 }
 
-/* Cursor Steps */
 .cursor-steps {
     margin: 0 0 20px 0;
     padding: 0 0 0 20px;
@@ -261,7 +249,6 @@ body {
     color: #7C3AED;
 }
 
-/* Buttons */
 .activate-mode, .end-cursor-mode {
     display: block;
     width: 100%;
@@ -283,15 +270,10 @@ body {
     background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
 }
 
-/* REMOVED: Cursor Indicator (the red dot) */
-/* This section has been removed completely */
-
-/* Hidden class */
 .hidden {
     display: none;
 }
 
-/* Responsive Design - Fixed for better mobile experience */
 @media (max-width: 1024px) {
     .content {
         flex-direction: column;
