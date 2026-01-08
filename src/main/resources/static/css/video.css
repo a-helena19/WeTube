@@ -329,6 +329,22 @@ body {
     }
 }
 
+#virtual-cursor {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: red;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+
+.hidden {
+    display: none;
+}
+
+
 @media (max-width: 480px) {
     .content {
         padding: 12px;

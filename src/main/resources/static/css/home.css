@@ -222,3 +222,17 @@ body {
 .pointing-badge:active {
     transform: scale(0.95);
 }
+
+#virtual-cursor {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: red;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.hidden {
+    display: none;
+}

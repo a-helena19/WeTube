@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeTube UI</title>
     <link rel="stylesheet" href="/css/home.css">
-    <script src="/js/home.js" defer></script>
+    <script type="module" src="/js/home.js"></script>
 </head>
+
 <body>
 <div class="container">
     <header class="header">
@@ -122,5 +123,7 @@
         </aside>
     </main>
 </div>
+<div id="virtual-cursor"></div>
+<video id="webcam" autoplay playsinline muted class="hidden"></video>
 </body>
 </html>
