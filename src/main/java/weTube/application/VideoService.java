@@ -3,7 +3,7 @@ package weTube.application;
 import org.springframework.stereotype.Service;
 import weTube.domain.Video;
 import weTube.domain.VideoRepository;
-import weTube.infrastructure.VideoEntity;import java.util.List;
+import java.util.List;
 import java.util.Optional;
 
 @Service
