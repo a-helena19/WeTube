@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeTube UI</title>
+    <link rel="stylesheet" href="/css/video.css">
+    <script src="/js/video.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div class="logo-section">
+            <a href="/video">
+                <img class="logo" src="/images/WeTubeLogo.png" alt="WeTube Logo">
+            </a>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search">
+            <button class="search-button">
+                <div class="search-icon"></div>
+            </button>
+        </div>
+        <div class="gesture-badge" id="mode-badge">
+            <span>Gesture Mode</span>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="left-column">
+            <section class="video-player">
+                <video
+                        id="main-video"
+                        width="100%"
+                        height="360"
+                        controls
+                        autoplay
+                        muted
+                        playsinline>
+                    <source src="https://res.cloudinary.com/dflbgeyli/video/upload/v1766774171/Alphabet_Video_in_Light_Blue_Green_Orange_Bold_Poppy_Style_iyvzkl.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <h3 class="video-title-large">The Alphabet, One Letter at a Time</h3>
+                <p class="video-details-large">Marques Brownlee • 4.7M views • 2 months ago</p>
+            </section>
+
+            <section class="video-grid">
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">New attack targets U.S. base in Syria following American airstrikes</h3>
+                        <p class="video-details">CBS News • 126K views • 2 hours ago</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">[Playlist] Soothing 24-hour jazz music and rain sounds</h3>
+                        <p class="video-details">In The Rain • 2M views • 3 months ago</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">223 hours video.</h3>
+                        <p class="video-details">Dharkness • 8.4M views • 2 years ago</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title">Chill Lofi Beats 🌿 Lofi Deep Focus</h3>
+                        <p class="video-details">Chillhop Music • 36K views • 3 weeks ago</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="gesture-description" id="sidebar">
+            <div id="gesture-controls">
+                <h2 class="gesture-heading">Gesture Controls Active</h2>
+                <p class="gesture-text">Use hand gestures to control the video player</p>
+                <button class="activate-mode" id="activate-cursor-mode">Activate Cursor Mode</button>
+                <div class="available-gestures">
+                    <p>Available Gestures</p>
+                    <span>👆 Point Up</span>
+                    <span>Activate Cursor Mode</span>
+                </div>
+            </div>
+
+            <div id="cursor-controls" class="hidden">
+                <h2 class="cursor-heading">Pointing Mode</h2>
+                <p class="cursor-text">Control the UI with your index finger</p>
+                <ul class="cursor-steps">
+                    <li><strong>Point your finger:</strong> Extend your index finger and point at the screen.</li>
+                    <li><strong>Move to control cursor:</strong> The red cursor follows your finger position.</li>
+                    <li><strong>Pinch to select:</strong> Pinch for hand-to-click.</li>
+                    <li><strong>Make fist to exit:</strong> Close your hand into a fist to return to normal mode.</li>
+                </ul>
+                <button class="end-cursor-mode" id="end-cursor-mode">End Cursor Mode</button>
+                <div class="cursor-indicator">
+                    <div class="red-dot"></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+</div>
+</body>
+</html>
