@@ -14,6 +14,8 @@ public class Video {
     private Integer viewCount;
     private LocalDateTime createdAt;
 
+    public Video() {
+    }
     public Video(Long id, String title, String description, String videoUrl, String thumbnailUrl, String creatorName, String creatorAvatarUrl, Integer durationSeconds, Integer viewCount, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
