@@ -3,8 +3,11 @@ package weTube.application;
 import org.springframework.stereotype.Service;
 import weTube.domain.Video;
 import weTube.domain.VideoRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
@@ -14,15 +17,48 @@ public class VideoService {
         this.videoRepository = videoRepository;
     }
 
-    public List<Video> findAll() {
-        return videoRepository.findAll();
+    public List<VideoDTO> findAll() {
+        List<Video> videos = videoRepository.findAll();
+        List<VideoDTO> videoDTOs = new ArrayList<>();
+
+        for (Video video : videos) {
+            videoDTOs.add(toDTO(video));
+        }
+        return videoDTOs;
     }
 
-    public List<Video> findAllRandom() {
-        return videoRepository.findAllRandom();
+    public List<VideoDTO> findAllRandom() {
+        List<Video> videos = videoRepository.findAllRandom();
+        List<VideoDTO> videoDTOs = new ArrayList<>();
+
+        for (Video video : videos) {
+            videoDTOs.add(toDTO(video));
+        }
+        return videoDTOs;
     }
-    public Optional<Video> findById(Long id) {
-        return videoRepository.findById(id);
+
+    public Optional<VideoDTO> findById(Long id) {
+        Optional<Video> videoOptional = videoRepository.findById(id);
+
+        if (videoOptional.isPresent()) {
+            return Optional.of(toDTO(videoOptional.get()));
+        }
+        return Optional.empty();
+    }
+
+    private VideoDTO toDTO(Video video) {
+        return new VideoDTO(
+                video.getId(),
+                video.getTitle(),
+                video.getDescription(),
+                video.getVideoUrl(),
+                video.getThumbnailUrl(),
+                video.getCreatorName(),
+                video.getCreatorAvatarUrl(),
+                video.getDurationSeconds(),
+                video.getViewCount(),
+                video.getCreatedAt()
+        );
     }
 }
 

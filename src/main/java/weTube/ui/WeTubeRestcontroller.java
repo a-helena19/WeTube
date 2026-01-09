@@ -4,8 +4,8 @@ package weTube.ui;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import weTube.application.VideoDTO;
 import weTube.application.VideoService;
-import weTube.domain.Video;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class WeTubeRestcontroller {
     }
 
     @GetMapping("/videos")
-    public List<Video> getAllVideos() {
+    public List<VideoDTO> getAllVideos() {
         return videoService.findAll();
     }
 }
