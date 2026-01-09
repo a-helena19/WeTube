@@ -43,4 +43,15 @@ public class VideoRepositoryImpl implements VideoRepository {
         }
         return videos;
     }
+
+    @Override
+    public List<Video> findAllRandom() {
+        List<VideoEntity> entities = jpaRepository.findAllRandom();
+        List<Video> videos = new ArrayList<>();
+        for (VideoEntity entity : entities) {
+            Video video = VideoMapper.toDomain(entity);
+            videos.add(video);
+        }
+        return videos;
+    }
 }

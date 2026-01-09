@@ -18,12 +18,40 @@ public class VideoEntity {
     @Column(name = "cloudinary_url", nullable = false)
     private String cloudinaryUrl;
 
+    @Column(name = "thumbnail_url")
     private String thumbnailUrl;
+
+    @Column(name = "creator_name")
     private String creatorName;
+
+    @Column(name = "creator_avatar_url")
     private String creatorAvatarUrl;
+
+    @Column(name = "duration_seconds")
     private Integer durationSeconds;
+
+    @Column(name = "view_count")
     private Integer viewCount = 0;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public VideoEntity() {}
+
+    public VideoEntity(Long id, String title, String description, String cloudinaryUrl,
+                       String thumbnailUrl, String creatorName, String creatorAvatarUrl,
+                       Integer durationSeconds, Integer viewCount, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.cloudinaryUrl = cloudinaryUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.creatorName = creatorName;
+        this.creatorAvatarUrl = creatorAvatarUrl;
+        this.durationSeconds = durationSeconds;
+        this.viewCount = viewCount;
+        this.createdAt = createdAt;
+    }
 
     public Long getId() {
         return id;

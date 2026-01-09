@@ -20,17 +20,22 @@ body {
 }
 
 .logo-section img {
-    width: 100px;
+    width: 130px;
     height: auto;
+    flex: 0 0 auto;
+    align-items: center;
+    display: flex;
 }
 
 .search-bar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 0;
-    flex: 1;
-    max-width: 600px;
-    margin: 0 20px;
+    width: 500px;
+    max-width: 500px;
 }
 
 .search-input {
@@ -103,11 +108,9 @@ body {
 }
 
 .content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 32px;
-    gap: 32px;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 25px;
     max-width: 1440px;
     margin: 0 auto;
     width: 100%;
@@ -120,56 +123,147 @@ body {
     gap: 32px;
 }
 
-.video-player {
+.video-page .video-player {
     width: 100%;
 }
 
-.video-title-large {
+.video-page .video-title-large {
     font-size: 20px;
     font-weight: bold;
     margin-top: 12px;
     margin-bottom: 8px;
 }
 
-.video-details-large {
+.video-page .video-details-large {
     font-size: 14px;
     color: #606060;
 }
 
-.video-grid {
+.video-page .video-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    gap: 25px;
     width: 100%;
 }
 
-.video-card {
+.video-page .video-card {
     display: flex;
     flex-direction: column;
+    gap: 0;
     background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
+    border-radius: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
-.thumbnail {
+.video-page .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.video-page .video-card-link {
+    text-decoration: none !important;
+    color: inherit;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:visited {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+.video-page .thumbnail {
     width: 100%;
-    height: 185px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    background-color: #000;
+}
+
+
+.video-page .video-info {
+    padding: 14px 16px 18px;
+}
+
+.video-page .video-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    color: #0f0f0f;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-page .video-details {
+    font-size: 12px;
+    color: #606060;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.video-page .video-player {
+    width: 100%;
+    margin-bottom: 12px;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+#main-video {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    border-radius: 12px;
+    display: block;
     object-fit: cover;
 }
 
-.video-info {
+.video-page .video-title-large {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #0f0f0f;
+}
+
+.video-page .video-details-large {
+    font-size: 14px;
+    color: #606060;
+    margin: 0 0 20px 0;
+}
+
+
+.video-page .video-info {
     padding: 12px;
 }
 
-.video-title {
+.video-page .video-title {
     font-size: 14px;
     font-weight: 500;
     margin: 0 0 8px 0;
     line-height: 1.4;
 }
 
-.video-details {
+.video-page .video-details {
     font-size: 12px;
     color: #606060;
     margin: 0;
@@ -276,8 +370,8 @@ body {
 
 @media (max-width: 1024px) {
     .content {
-        flex-direction: column;
-        padding: 16px;
+        display: grid;
+        grid-template-columns: 1fr 360px;
     }
 
     .left-column {
@@ -289,7 +383,7 @@ body {
         max-width: 100%;
     }
 
-    .video-grid {
+    .videos-grid {
         grid-template-columns: 1fr;
         gap: 16px;
     }
@@ -380,6 +474,8 @@ body {
     display: flex;
     gap: 12px;
     align-items: center;
+    flex: 0 0 auto;
+    margin-left: auto;
 }
 
 #gesture-badge {
@@ -398,4 +494,10 @@ body {
 
 #fullscreen-unlock:hover {
     opacity: 0.85;
+}
+
+.badge-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }

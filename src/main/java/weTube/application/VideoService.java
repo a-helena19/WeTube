@@ -14,14 +14,13 @@ public class VideoService {
         this.videoRepository = videoRepository;
     }
 
-    public Video create(Video video) {
-        return videoRepository.save(video);
-    }
-
     public List<Video> findAll() {
         return videoRepository.findAll();
     }
 
+    public List<Video> findAllRandom() {
+        return videoRepository.findAllRandom();
+    }
     public Optional<Video> findById(Long id) {
         return videoRepository.findById(id);
     }

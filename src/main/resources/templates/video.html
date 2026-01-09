@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeTube UI</title>
+    <title th:text="${currentVideo != null ? currentVideo.title : 'WeTube Video'}">WeTube Video</title>
     <link rel="stylesheet" href="/css/video.css">
+    <link rel="stylesheet" href="/css/home.css">
     <script src="/js/video.js" defer></script>
 </head>
-<body>
+<body class="video-page">
 <div class="container">
     <header class="header">
         <div class="logo-section">
@@ -36,51 +37,58 @@
 
     <main class="content">
         <div class="left-column">
-            <section class="video-player">
+            <section class="video-player" th:if="${currentVideo != null}">
                 <video
                         id="main-video"
-                        width="100%"
-                        height="360"
                         controls
                         autoplay
                         muted
                         playsinline>
-                    <source src="https://res.cloudinary.com/dflbgeyli/video/upload/v1766774171/Alphabet_Video_in_Light_Blue_Green_Orange_Bold_Poppy_Style_iyvzkl.mp4" type="video/mp4">
+                    <source th:src="${currentVideo.videoUrl != null ? currentVideo.videoUrl : 'https://res.cloudinary.com/dflbgeyli/video/upload/v1766774171/Alphabet_Video_in_Light_Blue_Green_Orange_Bold_Poppy_Style_iyvzkl.mp4'}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                <h3 class="video-title-large">The Alphabet, One Letter at a Time</h3>
-                <p class="video-details-large">Marques Brownlee • 4.7M views • 2 months ago</p>
+            </section>
+            <div th:if="${currentVideo != null}">
+                <h3 class="video-title-large" th:text="${currentVideo.title}">Video Title</h3>
+                <p class="video-details-large">
+                    <span th:text="${currentVideo.creatorName != null ? currentVideo.creatorName : 'Unknown'}">Creator</span>
+                    <span> • </span>
+                    <span th:text="${@timeUtil.formatViewCount(currentVideo.viewCount)} + ' views'">0 views</span>
+                    <span> • </span>
+                    <span th:text="${@timeUtil.getTimeAgo(currentVideo.createdAt)}">Unknown</span>
+                </p>
+            </div>
+
+
+            <!-- Falls keine Videos gefunden für debugging-->
+            <section th:if="${currentVideo == null}">
+                <div style="padding: 40px; text-align: center; background: #f0f0f0; border-radius: 8px;">
+                    <h2>Video nicht gefunden</h2>
+                    <p>Das angeforderte Video existiert nicht.</p>
+                    <a href="/home" style="color: #E7000B;">Zurück zur Startseite</a>
+                </div>
             </section>
 
             <section class="video-grid">
-                <div class="video-card">
-                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                    <div class="video-info">
-                        <h3 class="video-title">New attack targets U.S. base in Syria following American airstrikes</h3>
-                        <p class="video-details">CBS News • 126K views • 2 hours ago</p>
+                <a th:href="@{/video(id=${video.id})}"
+                   class="video-card-link"
+                   th:each="video : ${videos}"
+                   th:if="${currentVideo == null || video.id != currentVideo.id}">
+                    <div class="video-card">
+                        <img th:src="${video.thumbnailUrl != null ? video.thumbnailUrl : 'https://placehold.co/329x185'}"
+                             alt="Thumbnail" class="thumbnail">
+                        <div class="video-info">
+                            <h3 class="video-title" th:text="${video.title}">Video Title</h3>
+                            <p class="video-details">
+                                <span th:text="${video.creatorName != null ? video.creatorName : 'Unknown'}">Creator</span>
+                                <span> • </span>
+                                <span th:text="${@timeUtil.formatViewCount(video.viewCount)} + ' views'">0 views</span>
+                                <span> • </span>
+                                <span th:text="${@timeUtil.getTimeAgo(video.createdAt)}">Unknown</span>
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="video-card">
-                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                    <div class="video-info">
-                        <h3 class="video-title">[Playlist] Soothing 24-hour jazz music and rain sounds</h3>
-                        <p class="video-details">In The Rain • 2M views • 3 months ago</p>
-                    </div>
-                </div>
-                <div class="video-card">
-                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                    <div class="video-info">
-                        <h3 class="video-title">223 hours video.</h3>
-                        <p class="video-details">Dharkness • 8.4M views • 2 years ago</p>
-                    </div>
-                </div>
-                <div class="video-card">
-                    <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                    <div class="video-info">
-                        <h3 class="video-title">Chill Lofi Beats 🌿 Lofi Deep Focus</h3>
-                        <p class="video-details">Chillhop Music • 36K views • 3 weeks ago</p>
-                    </div>
-                </div>
+                </a>
             </section>
         </div>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,69 +31,22 @@
 
     <main class="content">
         <section class="video-grid">
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">New attack targets U.S. base in Syria following American airstrikes</h3>
-                    <p class="video-details">CBS News • 126K views • 2 hours ago</p>
+            <a th:href="@{/video(id=${video.id})}" class="video-card-link" th:each="video : ${videos}">
+                <div class="video-card">
+                    <img th:src="${video.thumbnailUrl != null ? video.thumbnailUrl : 'https://placehold.co/329x185'}"
+                         alt="Thumbnail" class="thumbnail">
+                    <div class="video-info">
+                        <h3 class="video-title" th:text="${video.title}">Video Title</h3>
+                        <p class="video-details">
+                            <span th:text="${video.creatorName != null ? video.creatorName : 'Unknown'}">Creator</span>
+                            <span> • </span>
+                            <span th:text="${@timeUtil.formatViewCount(video.viewCount)} + ' views'">0 views</span>
+                            <span> • </span>
+                            <span th:text="${@timeUtil.getTimeAgo(video.createdAt)}">Unknown</span>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">Garden of Eden 🌿 Lofi Deep Focus (chill lo-fi hip hop beats)</h3>
-                    <p class="video-details">Chillhop Music • 36K views • 3 weeks ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
-            <div class="video-card">
-                <img src="https://placehold.co/329x185" alt="Thumbnail" class="thumbnail">
-                <div class="video-info">
-                    <h3 class="video-title">YOUR QUESTIONS answered! March edition</h3>
-                    <p class="video-details">The Villages 365 • 687 views • 9 hours ago</p>
-                </div>
-            </div>
+            </a>
         </section>
 
         <aside class="gesture-description" id="sidebar">
