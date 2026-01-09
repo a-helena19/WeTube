@@ -7,11 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
     const gestureBadge = document.getElementById('gesture-badge');
+    const videoEl = document.getElementById("main-video");
 
     let cursorModeActive = false;
     let gestureLock = false;
 
     let gestureClearTimeout = null;
+
+    const unlockBtn = document.getElementById("fullscreen-unlock");
+    let fullscreenUnlocked = false;
+
+    unlockBtn.addEventListener("click", () => {
+        fullscreenUnlocked = true;
+        unlockBtn.style.display = "none";
+        console.log("[VIDEO] Fullscreen gestures unlocked");
+    });
 
 
     const gestureEmojis = {
@@ -19,7 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
         'fist': '✊',
         'pinch': '🤏',
         'thumbs-up': '👍',
-        'peace': '✌️'
+        'peace': '✌️',
+        'open-palm': '✋'
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -103,6 +114,47 @@ document.addEventListener("DOMContentLoaded", () => {
             case "FIST":
                 deactivateCursorMode();
                 break;
+
+            case "PLAY_PAUSE":
+                if (videoEl.paused) {
+                    videoEl.muted = true;
+                    videoEl.play().catch(err => {
+                        console.warn("[VIDEO] play blocked:", err);
+                    });
+                } else {
+                    videoEl.pause();
+                }
+                break;
+
+            case "FULLSCREEN":
+                if (!fullscreenUnlocked) {
+                    console.warn("[VIDEO] Fullscreen not unlocked yet");
+                    return;
+                }
+
+                // ENTER fullscreen
+                if (!document.fullscreenElement &&
+                    !document.webkitFullscreenElement) {
+
+                    const el = videoEl;
+
+                    if (el.requestFullscreen) {
+                        el.requestFullscreen();
+                    } else if (el.webkitRequestFullscreen) {
+                        el.webkitRequestFullscreen();
+                    }
+
+                }
+                // EXIT fullscreen
+                else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
+                }
+                break;
+
         }
     }
 

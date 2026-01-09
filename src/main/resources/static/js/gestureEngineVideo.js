@@ -43,13 +43,17 @@ async function initGestureEngine() {
 // FRAME LOOP
 // ===============================
 
-const HOLD_TIME = 500; // 1 Sekunde
+const HOLD_TIME = 750; // 1 Sekunde
 
 let pointUpStart = null;
 let fistStart = null;
+let victoryStart = null;
+let openPalmStart = null;
 
 let pointUpTriggered = false;
 let fistTriggered = false;
+let victoryTriggered = false;
+let openPalmTriggered = false;
 
 function isFingerUp(landmarks, tip, pip) {
     return landmarks[tip].y < landmarks[pip].y;
@@ -78,6 +82,8 @@ function loop() {
 
     const pointUp = indexUp && !middleUp && !ringUp && !pinkyUp;
     const fist = !indexUp && !middleUp && !ringUp && !pinkyUp;
+    const victory = indexUp && middleUp && !ringUp && !pinkyUp;
+    const openPalm = indexUp && middleUp && ringUp && pinkyUp;
 
     /* ===========================
        POINT UP (1s Hold)
@@ -118,6 +124,41 @@ function loop() {
         fistStart = null;
         fistTriggered = false;
     }
+
+    if (victory) {
+        document.dispatchEvent(new CustomEvent('gestureDetected', {
+            detail: { gestureName: 'peace' }
+        }));
+
+        if (!victoryStart) victoryStart = now;
+
+        if (!victoryTriggered && now - victoryStart >= HOLD_TIME) {
+            console.log("[GestureEngine] ✌️ VICTORY CONFIRMED");
+            emitGesture("PLAY_PAUSE");
+            victoryTriggered = true;
+        }
+    } else {
+        victoryStart = null;
+        victoryTriggered = false;
+    }
+
+    if (openPalm) {
+        document.dispatchEvent(new CustomEvent('gestureDetected', {
+            detail: { gestureName: 'open-palm' }
+        }));
+
+        if (!openPalmStart) openPalmStart = now;
+
+        if (!openPalmTriggered && now - openPalmStart >= HOLD_TIME) {
+            console.log("[GestureEngine] ✋ OPEN PALM CONFIRMED");
+            emitGesture("FULLSCREEN");
+            openPalmTriggered = true;
+        }
+    } else {
+        openPalmStart = null;
+        openPalmTriggered = false;
+    }
+
 
     requestAnimationFrame(loop);
 }

@@ -372,3 +372,14 @@ body {
     color: #047857;
     box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
 }
+
+
+#fullscreen-unlock {
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    border: 1px solid #93C5FD;
+    color: #1D4ED8;
+}
+
+#fullscreen-unlock:hover {
+    opacity: 0.85;
+}
