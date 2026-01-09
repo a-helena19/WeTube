@@ -16,6 +16,7 @@ let lastActionGesture = null;
 
 let activated = false;
 let activationTimeout = null;
+let activationLocked = false;
 
 /* =======================
    INIT
@@ -58,11 +59,10 @@ async function init() {
         ======================= */
         if (!activated) {
             if (isFourFingers(fingers)) {
-                if (isStableActivation("FOUR_FINGERS")) {
+                if (!activationLocked && isStableActivation("FOUR_FINGERS")) {
                     activate();
                 }
             } else {
-                // Reset, wenn Geste weg ist
                 stableFramesActivation = 0;
                 lastActivationGesture = null;
             }
@@ -99,17 +99,30 @@ init();
 ======================= */
 function activate() {
     activated = true;
+    activationLocked = true;
+
     stableFramesAction = 0;
     lastActionGesture = null;
+
     gestureDiv.textContent = "✋ Vier Finger erkannt – Geste ausführen";
+
+    // Nach 3 Sekunden Aktivierung wieder erlauben
+    setTimeout(() => {
+        activationLocked = false;
+    }, 3000);
+
     activationTimeout = setTimeout(deactivate, 3000);
 }
 
 function deactivate() {
     activated = false;
     clearTimeout(activationTimeout);
+
     stableFramesActivation = 0;
     lastActivationGesture = null;
+    stableFramesAction = 0;
+    lastActionGesture = null;
+
     gestureDiv.textContent = "⏳ Warte auf Aktivierung (✋ Vier Finger)";
 }
 
@@ -189,7 +202,7 @@ function isStableActivation(gesture) {
         lastActivationGesture = gesture;
         stableFramesActivation = 0;
     }
-    return stableFramesActivation > 5;
+    return stableFramesActivation > 3; // ← von 5 auf 3 reduziert
 }
 
 function isStableAction(gesture) {
@@ -199,5 +212,5 @@ function isStableAction(gesture) {
         lastActionGesture = gesture;
         stableFramesAction = 0;
     }
-    return stableFramesAction > 5;
+    return stableFramesAction > 3; // ← von 5 auf 3 reduziert
 }
