@@ -222,3 +222,16 @@ body {
 .pointing-badge:active {
     transform: scale(0.95);
 }
+
+.badge-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#gesture-badge {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1px solid #6EE7B7;
+    color: #047857;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}

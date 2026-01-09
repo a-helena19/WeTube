@@ -6,9 +6,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
+    const gestureBadge = document.getElementById('gesture-badge');
 
     let cursorModeActive = false;
     let gestureLock = false;
+
+    let gestureClearTimeout = null;
+
+
+    const gestureEmojis = {
+        'point-up': '👆',
+        'fist': '✊',
+        'pinch': '🤏',
+    };
+
+    function displayRecognizedGesture(gestureName) {
+        const emoji = gestureEmojis[gestureName] || '🤚';
+        gestureBadge.innerHTML = `<span>${emoji} ${gestureName}</span>`;
+        gestureBadge.style.display = "block";
+
+        // ⏱️ Reset Timer
+        if (gestureClearTimeout) {
+            clearTimeout(gestureClearTimeout);
+        }
+
+        gestureClearTimeout = setTimeout(() => {
+            clearGestureBadge();
+        }, 400); // 300–500ms fühlt sich gut an
+    }
+
+
+    function clearGestureBadge() {
+        gestureBadge.innerHTML = '';
+        gestureBadge.style.display = "none";
+    }
+
+    document.addEventListener('gestureDetected', (event) => {
+        displayRecognizedGesture(event.detail.gestureName);
+    });
 
     // ===========================
     // UI SWITCH FUNCTIONS

@@ -84,6 +84,9 @@ function loop() {
     ============================ */
 
     if (pointUp) {
+        document.dispatchEvent(new CustomEvent('gestureDetected', {
+            detail: { gestureName: 'point-up' }
+        }));
         if (!pointUpStart) pointUpStart = now;
 
         if (!pointUpTriggered && now - pointUpStart >= HOLD_TIME) {
@@ -101,6 +104,9 @@ function loop() {
     ============================ */
 
     if (fist) {
+        document.dispatchEvent(new CustomEvent('gestureDetected', {
+            detail: { gestureName: 'fist' }
+        }));
         if (!fistStart) fistStart = now;
 
         if (!fistTriggered && now - fistStart >= HOLD_TIME) {
