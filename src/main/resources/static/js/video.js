@@ -1,9 +1,55 @@
+import { initVideoActions } from "./videoActions.js";
+
 document.addEventListener("DOMContentLoaded", () => {
     const activateCursorModeBtn = document.getElementById("activate-cursor-mode");
     const endCursorModeBtn = document.getElementById("end-cursor-mode");
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
+
+    const videoEl = document.getElementById("main-video");
+    const feedbackEl = document.getElementById("video-feedback");
+
+    const videoActions = initVideoActions(videoEl, feedbackEl);
+
+    document.addEventListener("keydown", (e) => {
+        if (!videoEl) return;
+
+        switch (e.key) {
+
+            case "ArrowUp":
+                videoActions.volumeUp();
+                break;
+
+            case "ArrowDown":
+                videoActions.volumeDown();
+                break;
+
+            case "m":
+            case "M":
+                videoActions.toggleMute();
+                break;
+        }
+    });
+
+    videoEl.addEventListener("play", () => {
+        videoActions.showPlayFeedback?.("Play");
+    });
+
+    videoEl.addEventListener("pause", () => {
+        videoActions.showPauseFeedback?.("Pause");
+    });
+
+    videoEl.addEventListener("volumechange", () => {
+        if (videoEl.muted) {
+            videoActions.showMuteFeedback?.();
+        } else {
+            videoActions.showVolumeFeedback?.(
+                Math.round(videoEl.volume * 100)
+            );
+        }
+    });
+
 
     function switchToPointingMode() {
         gestureControls.classList.add("hidden");

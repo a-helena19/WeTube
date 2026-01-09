@@ -6,7 +6,7 @@
     <title th:text="${currentVideo != null ? currentVideo.title : 'WeTube Video'}">WeTube Video</title>
     <link rel="stylesheet" href="/css/video.css">
     <link rel="stylesheet" href="/css/home.css">
-    <script src="/js/video.js" defer></script>
+    <script type="module" src="/js/video.js" defer></script>
 </head>
 <body class="video-page">
 <div class="container">
@@ -47,6 +47,7 @@
                     <source th:src="${currentVideo.videoUrl != null ? currentVideo.videoUrl : 'https://res.cloudinary.com/dflbgeyli/video/upload/v1766774171/Alphabet_Video_in_Light_Blue_Green_Orange_Bold_Poppy_Style_iyvzkl.mp4'}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
+                <div id="video-feedback" class="video-feedback hidden"></div>
             </section>
             <div th:if="${currentVideo != null}">
                 <h3 class="video-title-large" th:text="${currentVideo.title}">Video Title</h3>
@@ -126,7 +127,7 @@
 
 <script type="module" src="/js/gestureEngineVideo.js"></script>
 <script src="/js/gestureBus.js"></script>
-<script src="/js/gestureModeVideo.js"></script>
+<script type="module" src="/js/gestureModeVideo.js"></script>
 
 </body>
 </html>

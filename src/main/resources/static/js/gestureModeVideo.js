@@ -1,3 +1,10 @@
+import { initVideoActions } from "./videoActions.js";
+
+const videoEl = document.getElementById("main-video");
+const feedbackEl = document.getElementById("video-feedback");
+
+const videoActions = initVideoActions(videoEl, feedbackEl);
+
 document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
@@ -84,6 +91,27 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("[HOME] Cursor Mode deaktiviert");
     }
 
+    const VOLUME_STEP = 0.1;
+
+    function volumeUp() {
+        videoEl.volume = Math.min(1, videoEl.volume + VOLUME_STEP);
+        videoEl.muted = false;
+        showVideoFeedback("🔊", `${Math.round(videoEl.volume * 100)}%`);
+    }
+
+    function volumeDown() {
+        videoEl.volume = Math.max(0, videoEl.volume - VOLUME_STEP);
+        showVideoFeedback("🔉", `${Math.round(videoEl.volume * 100)}%`);
+    }
+
+    function toggleMute() {
+        videoEl.muted = !videoEl.muted;
+        showVideoFeedback(
+            videoEl.muted ? "🔇" : "🔊",
+            videoEl.muted ? "Muted" : "Unmuted"
+        );
+    }
+
     // ===========================
     // GESTURE HANDLING
     // ===========================
@@ -104,14 +132,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
 
             case "Victory":
-                if (videoEl.paused) {
-                    videoEl.muted = true;
-                    videoEl.play().catch(err => {
-                        console.warn("[VIDEO] play blocked:", err);
-                    });
-                } else {
-                    videoEl.pause();
-                }
+                videoActions.playPause();
+                break;
+
+            case "Thumb_Up":
+                videoActions.volumeUp();
+                break;
+
+            case "Thumb_Down":
+                videoActions.volumeDown();
+                break;
+
+            case "SHAKA":
+                videoActions.toggleMute();
                 break;
 
         }

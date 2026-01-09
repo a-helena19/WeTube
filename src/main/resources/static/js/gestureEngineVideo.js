@@ -29,6 +29,17 @@ let activeGesture = null;
 let gestureStartTime = null;
 let gestureTriggered = false;
 
+let lastRepeatTime = null;
+
+const GESTURE_REPEAT = {
+    Thumb_Up: {
+        interval: 150 // ms
+    },
+    Thumb_Down: {
+        interval: 150
+    }
+};
+
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
@@ -82,6 +93,7 @@ function isShaka(lm) {
 
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 500;
+    const repeatConfig = GESTURE_REPEAT[gestureName];
 
     dispatchGestureFeedback(gestureName);
 
@@ -89,10 +101,25 @@ function handleGestureHold(gestureName, now) {
         activeGesture = gestureName;
         gestureStartTime = now;
         gestureTriggered = false;
+        lastRepeatTime = null;
         return;
     }
 
-    if (!gestureTriggered && now - gestureStartTime >= holdTime) {
+    const heldTime = now - gestureStartTime;
+
+    // Repeat-Geste (z.B. Lautstärke)
+    if (repeatConfig) {
+        if (heldTime >= holdTime) {
+            if (!lastRepeatTime || now - lastRepeatTime >= repeatConfig.interval) {
+                emitGesture(gestureName);
+                lastRepeatTime = now;
+            }
+        }
+        return;
+    }
+
+    // Einmal-Geste
+    if (!gestureTriggered && heldTime >= holdTime) {
         emitGesture(gestureName);
         gestureTriggered = true;
     }
@@ -102,6 +129,7 @@ function resetGestureHold() {
     activeGesture = null;
     gestureStartTime = null;
     gestureTriggered = false;
+    lastRepeatTime = null;
 }
 
 function dispatchGestureFeedback(name) {
