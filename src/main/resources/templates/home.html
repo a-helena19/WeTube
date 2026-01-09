@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeTube UI</title>
     <link rel="stylesheet" href="/css/home.css">
-    <script type="module" src="/js/home.js"></script>
+    <script src="/js/home.js" defer></script>
 </head>
-
 <body>
 <div class="container">
     <header class="header">
@@ -22,8 +21,11 @@
                 <div class="search-icon"></div>
             </button>
         </div>
-        <div class="gesture-badge" id="mode-badge">
-            <span>Gesture Mode</span>
+        <div class="badge-group">
+            <div class="gesture-badge" id="gesture-badge" style="display: none"></div>
+            <div class="gesture-badge" id="mode-badge">
+                <span>Gesture Mode</span>
+            </div>
         </div>
     </header>
 
@@ -123,7 +125,9 @@
         </aside>
     </main>
 </div>
-<div id="virtual-cursor"></div>
-<video id="webcam" autoplay playsinline muted class="hidden"></video>
+
+<script type="module" src="/js/gestureEngineHome.js"></script>
+<script src="/js/gestureBus.js"></script>
+<script src="/js/gestureModeHome.js"></script>
 </body>
 </html>
