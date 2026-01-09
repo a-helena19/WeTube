@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const gestureEmojis = {
-        'point-up': '👆',
-        'fist': '✊',
-        'pinch': '🤏',
+        'Pointing_Up': '👆',
+        'Closed_Fist': '✊',
+        'PINCH': '🤏',
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -89,16 +89,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleGesture(gesture) {
         if (!gesture) return;
-        if (gestureLock && gesture !== "FIST") return;
+        if (gestureLock && gesture !== "Closed_Fist") return;
 
         console.log("[HOME] handleGesture:", gesture);
 
         switch (gesture) {
-            case "POINT_UP":
+            case "Pointing_Up":
                 activateCursorMode();
                 break;
 
-            case "FIST":
+            case "Closed_Fist":
                 deactivateCursorMode();
                 break;
         }

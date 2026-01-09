@@ -1,30 +1,36 @@
 import {
     HandLandmarker,
+    GestureRecognizer,
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs";
-
-// ===============================
-// CAMERA (hidden)
-// ===============================
 
 const video = document.createElement("video");
 video.setAttribute("playsinline", "");
 
 let handLandmarker = null;
+let gestureRecognizer = null;
 
-async function initGestureEngine() {
-    // 1️⃣ Kamera starten
+const GESTURE_HOLD_TIME = {
+    Pointing_Up: 400,
+    Closed_Fist: 400,
+    PINCH: 600
+};
+
+let activeGesture = null;
+let gestureStartTime = null;
+let gestureTriggered = false;
+
+async function initGestureEngineHome() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     await video.play();
-    console.log("[GestureEngine] Camera started");
 
-    // 2️⃣ MediaPipe Vision initialisieren
+    console.log("[GestureEngineHome] Camera started");
+
     const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
     );
 
-    // 3️⃣ HandLandmarker laden (✅ FIXED MODEL PATH)
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
             modelAssetPath:
@@ -34,93 +40,108 @@ async function initGestureEngine() {
         numHands: 1
     });
 
-    console.log("[GestureEngine] HandLandmarker ready");
+    gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+        baseOptions: {
+            modelAssetPath:
+                "https://storage.googleapis.com/mediapipe-assets/gesture_recognizer.task"
+        },
+        runningMode: "VIDEO",
+        numHands: 1
+    });
 
+    console.log("[GestureEngineHome] Models ready");
     requestAnimationFrame(loop);
 }
 
-// ===============================
-// FRAME LOOP
-// ===============================
+function dispatchGestureFeedback(name) {
+    document.dispatchEvent(
+        new CustomEvent("gestureDetected", {
+            detail: { gestureName: name }
+        })
+    );
+}
 
-const HOLD_TIME = 500; // 1 Sekunde
+function resetGestureHold() {
+    activeGesture = null;
+    gestureStartTime = null;
+    gestureTriggered = false;
+}
 
-let pointUpStart = null;
-let fistStart = null;
+function handleGestureHold(gestureName, now) {
+    const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 400;
 
-let pointUpTriggered = false;
-let fistTriggered = false;
+    dispatchGestureFeedback(gestureName);
 
-function isFingerUp(landmarks, tip, pip) {
-    return landmarks[tip].y < landmarks[pip].y;
+    if (activeGesture !== gestureName) {
+        activeGesture = gestureName;
+        gestureStartTime = now;
+        gestureTriggered = false;
+        return;
+    }
+
+    if (!gestureTriggered && now - gestureStartTime >= holdTime) {
+        emitGesture(gestureName);
+        gestureTriggered = true;
+    }
+}
+
+function isPinch(lm) {
+    const dx = lm[4].x - lm[8].x;
+    const dy = lm[4].y - lm[8].y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < 0.04;
 }
 
 function loop() {
     const now = performance.now();
-    const result = handLandmarker.detectForVideo(video, now);
+
+    // ===============================
+    // 1️⃣ GestureRecognizer
+    // ===============================
+
+    const gestureResult =
+        gestureRecognizer.recognizeForVideo(video, now);
+
+    const topGesture =
+        gestureResult.gestures?.[0]?.[0] || null;
+
+    const ALLOWED_GESTURES = new Set([
+        "Pointing_Up",
+        "Closed_Fist"
+    ]);
+
+    if (
+        topGesture &&
+        ALLOWED_GESTURES.has(topGesture.categoryName) &&
+        topGesture.score > 0.6
+    ) {
+        handleGestureHold(topGesture.categoryName, now);
+        requestAnimationFrame(loop);
+        return;
+    }
+
+    // ===============================
+    // 2️⃣ HandLandmarker (PINCH)
+    // ===============================
+
+    const result =
+        handLandmarker.detectForVideo(video, now);
 
     if (!result.landmarks || result.landmarks.length === 0) {
-        // Reset alles, wenn keine Hand
-        pointUpStart = null;
-        fistStart = null;
-        pointUpTriggered = false;
-        fistTriggered = false;
+        resetGestureHold();
         requestAnimationFrame(loop);
         return;
     }
 
     const lm = result.landmarks[0];
 
-    const indexUp = isFingerUp(lm, 8, 6);
-    const middleUp = isFingerUp(lm, 12, 10);
-    const ringUp = isFingerUp(lm, 16, 14);
-    const pinkyUp = isFingerUp(lm, 20, 18);
-
-    const pointUp = indexUp && !middleUp && !ringUp && !pinkyUp;
-    const fist = !indexUp && !middleUp && !ringUp && !pinkyUp;
-
-    /* ===========================
-       POINT UP (1s Hold)
-    ============================ */
-
-    if (pointUp) {
-        document.dispatchEvent(new CustomEvent('gestureDetected', {
-            detail: { gestureName: 'point-up' }
-        }));
-        if (!pointUpStart) pointUpStart = now;
-
-        if (!pointUpTriggered && now - pointUpStart >= HOLD_TIME) {
-            console.log("[GestureEngine] 👆 POINT_UP CONFIRMED");
-            emitGesture("POINT_UP");
-            pointUpTriggered = true;
-        }
+    if (isPinch(lm)) {
+        handleGestureHold("PINCH", now);
     } else {
-        pointUpStart = null;
-        pointUpTriggered = false;
-    }
-
-    /* ===========================
-       FIST (1s Hold)
-    ============================ */
-
-    if (fist) {
-        document.dispatchEvent(new CustomEvent('gestureDetected', {
-            detail: { gestureName: 'fist' }
-        }));
-        if (!fistStart) fistStart = now;
-
-        if (!fistTriggered && now - fistStart >= HOLD_TIME) {
-            console.log("[GestureEngine] ✊ FIST CONFIRMED");
-            emitGesture("FIST");
-            fistTriggered = true;
-        }
-    } else {
-        fistStart = null;
-        fistTriggered = false;
+        resetGestureHold();
     }
 
     requestAnimationFrame(loop);
 }
 
-// 🚀 START (top-level await ist OK, da type="module")
-await initGestureEngine();
+await initGestureEngineHome();

@@ -486,13 +486,13 @@ a:hover {
 }
 
 
-#fullscreen-unlock {
+#camera-lock {
     background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
     border: 1px solid #93C5FD;
     color: #1D4ED8;
 }
 
-#fullscreen-unlock:hover {
+#camera-lock:hover {
     opacity: 0.85;
 }
 

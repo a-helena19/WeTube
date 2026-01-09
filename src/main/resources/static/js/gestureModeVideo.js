@@ -1,7 +1,3 @@
-// ===============================
-// Gesture Mode Controller – Home
-// ===============================
-
 document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
@@ -14,23 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let gestureClearTimeout = null;
 
-    const unlockBtn = document.getElementById("fullscreen-unlock");
-    let fullscreenUnlocked = false;
-
-    unlockBtn.addEventListener("click", () => {
-        fullscreenUnlocked = true;
-        unlockBtn.style.display = "none";
-        console.log("[VIDEO] Fullscreen gestures unlocked");
-    });
-
 
     const gestureEmojis = {
-        'point-up': '👆',
-        'fist': '✊',
-        'pinch': '🤏',
-        'thumbs-up': '👍',
-        'peace': '✌️',
-        'open-palm': '✋'
+        'Pointing_Up': '👆',
+        'Closed_Fist': '✊',
+        'Thumb_Up': '👍',
+        'Thumb_Down': '👎',
+        'Victory': '✌️',
+        'Open_Palm': '✋',
+        'SHAKA': '🤙'
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -102,20 +90,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleGesture(gesture) {
         if (!gesture) return;
-        if (gestureLock && gesture !== "FIST") return;
+        if (gestureLock && gesture !== "Closed_Fist") return;
 
         console.log("[HOME] handleGesture:", gesture);
 
         switch (gesture) {
-            case "POINT_UP":
+            case "Pointing_Up":
                 activateCursorMode();
                 break;
 
-            case "FIST":
+            case "Closed_Fist":
                 deactivateCursorMode();
                 break;
 
-            case "PLAY_PAUSE":
+            case "Victory":
                 if (videoEl.paused) {
                     videoEl.muted = true;
                     videoEl.play().catch(err => {
@@ -123,35 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 } else {
                     videoEl.pause();
-                }
-                break;
-
-            case "FULLSCREEN":
-                if (!fullscreenUnlocked) {
-                    console.warn("[VIDEO] Fullscreen not unlocked yet");
-                    return;
-                }
-
-                // ENTER fullscreen
-                if (!document.fullscreenElement &&
-                    !document.webkitFullscreenElement) {
-
-                    const el = videoEl;
-
-                    if (el.requestFullscreen) {
-                        el.requestFullscreen();
-                    } else if (el.webkitRequestFullscreen) {
-                        el.webkitRequestFullscreen();
-                    }
-
-                }
-                // EXIT fullscreen
-                else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    }
                 }
                 break;
 
