@@ -208,6 +208,8 @@ function handleOpenPalmFullscreen(now) {
     if (!openPalmStartTime) {
         openPalmStartTime = now;
         openPalmTriggered = false;
+
+        dispatchGestureFeedback("Open_Palm");
         return;
     }
 

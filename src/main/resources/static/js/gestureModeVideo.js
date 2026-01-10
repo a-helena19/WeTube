@@ -30,12 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
         'SHAKA': '🤙',
         'ILY_RIGHT_NEXT': '🤟',
         'ILY_LEFT_BACK': '🤟',
-        'RESTART_VIDEO': '🤏',
-        'TOGGLE_FAKE_FULLSCREEN': '🖐',
-        'SEEK_FORWARD': '⏩',
-        'SEEK_BACKWARD': '⏪',
-        'NEXT_VIDEO': '➡️',
-        'BACK_VIDEO': '⬅️'
+        'FOUR_FINGER_RIGHT': '🖐️',
+        'FOUR_FINGER_LEFT': '🖐️',
+        'PINCH': '🤏'
     };
 
     function displayRecognizedGesture(gestureName) {
