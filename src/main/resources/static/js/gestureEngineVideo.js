@@ -39,8 +39,13 @@ let gestureStartTime = null;
 let gestureTriggered = false;
 let lastRepeatTime = null;
 
-let threeFingerStartX = null;
-let lastSeekEmitTime = 0;
+const THREE_FINGER_SEEK_HOLD_TIME = 300;
+const THREE_FINGER_SEEK_REPEAT_INTERVAL = 150;
+
+let threeFingerSeekStartTime = null;
+let threeFingerLastRepeatTime = null;
+let threeFingerActiveDirection = null; // "FORWARD" | "BACKWARD"
+
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -111,6 +116,37 @@ function dispatchGestureFeedback(name) {
     );
 }
 
+function handleThreeFingerSeek(direction, now) {
+    // direction: "FORWARD" | "BACKWARD"
+
+    if (threeFingerActiveDirection !== direction) {
+        threeFingerActiveDirection = direction;
+        threeFingerSeekStartTime = now;
+        threeFingerLastRepeatTime = null;
+        return;
+    }
+
+    const heldTime = now - threeFingerSeekStartTime;
+
+    if (heldTime < THREE_FINGER_SEEK_HOLD_TIME) {
+        return;
+    }
+
+    // erster Trigger
+    if (!threeFingerLastRepeatTime) {
+        emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
+        threeFingerLastRepeatTime = now;
+        return;
+    }
+
+    // repeats
+    if (now - threeFingerLastRepeatTime >= THREE_FINGER_SEEK_REPEAT_INTERVAL) {
+        emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
+        threeFingerLastRepeatTime = now;
+    }
+}
+
+
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 500;
     const repeatConfig = GESTURE_REPEAT[gestureName];
@@ -152,6 +188,13 @@ function resetGestureHold() {
     lastRepeatTime = null;
 }
 
+function resetThreeFingerSeek() {
+    threeFingerSeekStartTime = null;
+    threeFingerLastRepeatTime = null;
+    threeFingerActiveDirection = null;
+}
+
+
 // ===============================
 // FRAME LOOP
 // ===============================
@@ -179,6 +222,7 @@ function loop() {
         ALLOWED_GESTURES.has(topGesture.categoryName) &&
         topGesture.score > 0.6
     ) {
+        console.log(topGesture, "detected");
         handleGestureHold(topGesture.categoryName, now);
         requestAnimationFrame(loop);
         return;
@@ -189,6 +233,7 @@ function loop() {
 
     if (!result.landmarks || result.landmarks.length === 0) {
         resetGestureHold();
+        resetThreeFingerSeek();
         requestAnimationFrame(loop);
         return;
     }
@@ -202,27 +247,22 @@ function loop() {
     }
 
     if (isThreeFinger(lm)) {
-        const x = lm[0].x; // Handgelenk als Referenz
+        const handedness =
+            result.handednesses?.[0]?.[0]?.categoryName;
 
-        if (threeFingerStartX === null) {
-            threeFingerStartX = x;
-        } else {
-            const deltaX = x - threeFingerStartX;
-            const DEADZONE = 0.03;
-            const COOLDOWN = 250;
-
-            if (Math.abs(deltaX) > DEADZONE && now - lastSeekEmitTime > COOLDOWN) {
-                emitGesture(deltaX > 0 ? "SEEK_FORWARD" : "SEEK_BACKWARD");
-                lastSeekEmitTime = now;
-                threeFingerStartX = x;
-            }
+        if (handedness === "Right") {
+            handleThreeFingerSeek("FORWARD", now);
+            dispatchGestureFeedback("THREE_FINGER_RIGHT");
+        } else if (handedness === "Left") {
+            handleThreeFingerSeek("BACKWARD", now);
+            dispatchGestureFeedback("THREE_FINGER_LEFT");
         }
 
         requestAnimationFrame(loop);
         return;
     }
 
-    threeFingerStartX = null;
+    resetThreeFingerSeek();
     requestAnimationFrame(loop);
 }
 
