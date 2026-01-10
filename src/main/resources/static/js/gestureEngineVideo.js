@@ -52,17 +52,18 @@ let ilyNavStartTime = null;
 let ilyNavTriggered = false;
 let ilyNavDirection = null; // "NEXT" | "BACK"
 
-const FIST_OPEN_RESTART_WINDOW = 400; // ms
+const OPEN_PALM_FULLSCREEN_HOLD = 500;
 
-let fistDetectedTime = null;
-let fistOpenRestartTriggered = false;
+let openPalmStartTime = null;
+let openPalmTriggered = false;
+
+let pinchActive = false;
 
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     await video.play();
-    console.log("[GestureEngine] Camera started");
 
     const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
@@ -86,7 +87,6 @@ async function initGestureEngine() {
         numHands: 1
     });
 
-    console.log("[GestureEngine] Models ready");
     requestAnimationFrame(loop);
 }
 
@@ -128,6 +128,12 @@ function isShaka(lm) {
     const ringUp = isFingerUp(lm, 16, 14);
 
     return thumbUp && pinkyUp && !indexUp && !middleUp && !ringUp;
+}
+
+function isPinch(lm) {
+    const dx = lm[4].x - lm[8].x;
+    const dy = lm[4].y - lm[8].y;
+    return Math.sqrt(dx * dx + dy * dy) < 0.04;
 }
 
 function dispatchGestureFeedback(name) {
@@ -186,27 +192,38 @@ function handleILYNavigationOnce(direction, now) {
     }
 }
 
-function handleFistOpenRestart(gestureName, now) {
-    // Schritt 1: Fist merken
-    if (gestureName === "Closed_Fist") {
-        fistDetectedTime = now;
-        fistOpenRestartTriggered = false;
+function handlePinchRestart(lm) {
+    if (isPinch(lm)) {
+        if (!pinchActive) {
+            emitGesture("RESTART_VIDEO");
+            dispatchGestureFeedback("RESTART_VIDEO");
+            pinchActive = true;
+        }
+    } else {
+        pinchActive = false;
+    }
+}
+
+function handleOpenPalmFullscreen(now) {
+    if (!openPalmStartTime) {
+        openPalmStartTime = now;
+        openPalmTriggered = false;
         return;
     }
 
-    // Schritt 2: Open Palm kurz danach
-    if (
-        gestureName === "Open_Palm" &&
-        fistDetectedTime &&
-        !fistOpenRestartTriggered
-    ) {
-        const delta = now - fistDetectedTime;
+    if (openPalmTriggered) return;
 
-        if (delta <= FIST_OPEN_RESTART_WINDOW) {
-            emitGesture("RESTART_VIDEO");
-            fistOpenRestartTriggered = true;
-        }
+    const heldTime = now - openPalmStartTime;
+
+    if (heldTime >= OPEN_PALM_FULLSCREEN_HOLD) {
+        emitGesture("TOGGLE_FAKE_FULLSCREEN");
+        openPalmTriggered = true;
     }
+}
+
+function resetOpenPalm() {
+    openPalmStartTime = null;
+    openPalmTriggered = false;
 }
 
 function handleGestureHold(gestureName, now) {
@@ -262,11 +279,6 @@ function resetILYNav() {
     ilyNavDirection = null;
 }
 
-function resetFistOpenRestart() {
-    fistDetectedTime = null;
-    fistOpenRestartTriggered = false;
-}
-
 // ===============================
 // FRAME LOOP
 // ===============================
@@ -280,8 +292,15 @@ function loop() {
     const topGesture =
         gestureResult.gestures?.[0]?.[0] || null;
 
+    if (topGesture?.categoryName === "Open_Palm" && topGesture.score > 0.6) {
+        handleOpenPalmFullscreen(now);
+        requestAnimationFrame(loop);
+        return;
+    } else {
+        resetOpenPalm();
+    }
+
     const ALLOWED_GESTURES = new Set([
-        "Open_Palm",
         "Closed_Fist",
         "Pointing_Up",
         "Victory",
@@ -294,10 +313,9 @@ function loop() {
         ALLOWED_GESTURES.has(topGesture.categoryName) &&
         topGesture.score > 0.6
     ) {
-        handleFistOpenRestart(topGesture.categoryName, now);
         handleGestureHold(topGesture.categoryName, now);
         requestAnimationFrame(loop);
-        return;
+        return; ////////////////////////
     }
 
     const result =
@@ -307,12 +325,13 @@ function loop() {
         resetGestureHold();
         resetILYNav();
         resetFourFingerSeek();
-        resetFistOpenRestart();
         requestAnimationFrame(loop);
         return;
     }
 
     const lm = result.landmarks[0];
+
+    handlePinchRestart(lm);
 
     if (isShaka(lm)) {
         handleGestureHold("SHAKA", now);
@@ -350,13 +369,6 @@ function loop() {
 
         requestAnimationFrame(loop);
         return;
-    }
-
-    if (
-        topGesture?.categoryName !== "Closed_Fist" &&
-        topGesture?.categoryName !== "Open_Palm"
-    ) {
-        resetFistOpenRestart();
     }
 
     resetILYNav();

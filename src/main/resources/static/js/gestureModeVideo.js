@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let gestureClearTimeout = null;
 
+    let fakeFullscreenActive = false;
+
 
     const gestureEmojis = {
         'Pointing_Up': '👆',
@@ -27,7 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
         'Open_Palm': '✋',
         'SHAKA': '🤙',
         'ILY_RIGHT_NEXT': '🤟',
-        'ILY_LEFT_NEXT': '🤟'
+        'ILY_LEFT_BACK': '🤟',
+        'RESTART_VIDEO': '🤏',
+        'TOGGLE_FAKE_FULLSCREEN': '🖐',
+        'SEEK_FORWARD': '⏩',
+        'SEEK_BACKWARD': '⏪',
+        'NEXT_VIDEO': '➡️',
+        'BACK_VIDEO': '⬅️'
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -169,6 +177,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 restartVideo();
                 break;
 
+            case "TOGGLE_FAKE_FULLSCREEN":
+                toggleFakeFullscreen();
+                break;
+
 
         }
     }
@@ -201,4 +213,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log("[VIDEO] Restarted via Fist → Open");
     }
+
+    function toggleFakeFullscreen() {
+        const videoPlayer = document.querySelector(".video-player");
+        const feedback = document.getElementById("video-feedback");
+
+        if (!videoPlayer) return;
+
+        fakeFullscreenActive = !fakeFullscreenActive;
+        videoPlayer.classList.toggle("fake-fullscreen", fakeFullscreenActive);
+
+        showFullscreenHint(feedback);
+    }
+
+    function showFullscreenHint(feedback) {
+        if (!feedback) return;
+
+        feedback.textContent = fakeFullscreenActive
+            ? "🖐 Open hand to close"
+            : "🖐 Open hand to expand";
+
+        feedback.classList.remove("hidden");
+        feedback.classList.add("show");
+
+        setTimeout(() => {
+            feedback.classList.remove("show");
+            feedback.classList.add("hidden");
+        }, 1200);
+    }
+
 });
