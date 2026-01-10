@@ -39,12 +39,12 @@ let gestureStartTime = null;
 let gestureTriggered = false;
 let lastRepeatTime = null;
 
-const THREE_FINGER_SEEK_HOLD_TIME = 300;
-const THREE_FINGER_SEEK_REPEAT_INTERVAL = 150;
+const FOUR_FINGER_SEEK_HOLD_TIME = 100;
+const FOUR_FINGER_SEEK_REPEAT_INTERVAL = 150;
 
-let threeFingerSeekStartTime = null;
-let threeFingerLastRepeatTime = null;
-let threeFingerActiveDirection = null; // "FORWARD" | "BACKWARD"
+let fourFingerSeekStartTime = null;
+let fourFingerLastRepeatTime = null;
+let fourFingerActiveDirection = null; // "FORWARD" | "BACKWARD"
 
 
 async function initGestureEngine() {
@@ -82,15 +82,15 @@ async function initGestureEngine() {
 // ===============================
 // HELPERS
 // ===============================
-function isThreeFinger(lm) {
+function isFourFinger(lm) {
     const indexUp  = lm[8].y  < lm[6].y;
     const middleUp = lm[12].y < lm[10].y;
     const ringUp   = lm[16].y < lm[14].y;
+    const pinkyUp  = lm[20].y < lm[18].y;
 
     const thumbDown = lm[4].y > lm[3].y;
-    const pinkyDown = lm[20].y > lm[18].y;
 
-    return indexUp && middleUp && ringUp && thumbDown && pinkyDown;
+    return indexUp && middleUp && ringUp && pinkyUp && thumbDown;
 }
 
 function isFingerUp(lm, tip, pip) {
@@ -116,33 +116,33 @@ function dispatchGestureFeedback(name) {
     );
 }
 
-function handleThreeFingerSeek(direction, now) {
+function handleFourFingerSeek(direction, now) {
     // direction: "FORWARD" | "BACKWARD"
 
-    if (threeFingerActiveDirection !== direction) {
-        threeFingerActiveDirection = direction;
-        threeFingerSeekStartTime = now;
-        threeFingerLastRepeatTime = null;
+    if (fourFingerActiveDirection !== direction) {
+        fourFingerActiveDirection = direction;
+        fourFingerSeekStartTime = now;
+        fourFingerLastRepeatTime = null;
         return;
     }
 
-    const heldTime = now - threeFingerSeekStartTime;
+    const heldTime = now - fourFingerSeekStartTime;
 
-    if (heldTime < THREE_FINGER_SEEK_HOLD_TIME) {
+    if (heldTime < FOUR_FINGER_SEEK_HOLD_TIME) {
         return;
     }
 
     // erster Trigger
-    if (!threeFingerLastRepeatTime) {
+    if (!fourFingerLastRepeatTime) {
         emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
-        threeFingerLastRepeatTime = now;
+        fourFingerLastRepeatTime = now;
         return;
     }
 
     // repeats
-    if (now - threeFingerLastRepeatTime >= THREE_FINGER_SEEK_REPEAT_INTERVAL) {
+    if (now - fourFingerLastRepeatTime >= FOUR_FINGER_SEEK_REPEAT_INTERVAL) {
         emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
-        threeFingerLastRepeatTime = now;
+        fourFingerLastRepeatTime = now;
     }
 }
 
@@ -188,10 +188,10 @@ function resetGestureHold() {
     lastRepeatTime = null;
 }
 
-function resetThreeFingerSeek() {
-    threeFingerSeekStartTime = null;
-    threeFingerLastRepeatTime = null;
-    threeFingerActiveDirection = null;
+function resetFourFingerSeek() {
+    fourFingerSeekStartTime = null;
+    fourFingerLastRepeatTime = null;
+    fourFingerActiveDirection = null;
 }
 
 
@@ -233,7 +233,7 @@ function loop() {
 
     if (!result.landmarks || result.landmarks.length === 0) {
         resetGestureHold();
-        resetThreeFingerSeek();
+        resetFourFingerSeek();
         requestAnimationFrame(loop);
         return;
     }
@@ -246,23 +246,23 @@ function loop() {
         resetGestureHold();
     }
 
-    if (isThreeFinger(lm)) {
+    if (isFourFinger(lm)) {
         const handedness =
             result.handednesses?.[0]?.[0]?.categoryName;
 
         if (handedness === "Right") {
-            handleThreeFingerSeek("FORWARD", now);
-            dispatchGestureFeedback("THREE_FINGER_RIGHT");
+            handleFourFingerSeek("FORWARD", now);
+            dispatchGestureFeedback("FOUR_FINGER_RIGHT");
         } else if (handedness === "Left") {
-            handleThreeFingerSeek("BACKWARD", now);
-            dispatchGestureFeedback("THREE_FINGER_LEFT");
+            handleFourFingerSeek("BACKWARD", now);
+            dispatchGestureFeedback("FOUR_FINGER_LEFT");
         }
 
         requestAnimationFrame(loop);
         return;
     }
 
-    resetThreeFingerSeek();
+    resetFourFingerSeek();
     requestAnimationFrame(loop);
 }
 

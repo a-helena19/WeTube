@@ -64,9 +64,9 @@
             <!-- Falls keine Videos gefunden für debugging-->
             <section th:if="${currentVideo == null}">
                 <div style="padding: 40px; text-align: center; background: #f0f0f0; border-radius: 8px;">
-                    <h2>Video nicht gefunden</h2>
-                    <p>Das angeforderte Video existiert nicht.</p>
-                    <a href="/home" style="color: #E7000B;">Zurück zur Startseite</a>
+                    <h2>Video not found</h2>
+                    <p>The requested video does not exist.</p>
+                    <a href="/home" style="color: #E7000B;">Back to Homepage</a>
                 </div>
             </section>
 
@@ -100,9 +100,14 @@
                 <button class="activate-mode" id="activate-cursor-mode">Activate Cursor Mode</button>
                 <div class="available-gestures">
                     <p class="available-title">Available Gestures</p>
+                    <p class="available-text">Please Hold your hand often for 1 sec</p>
 
                     <div class="gesture-row">
-                        <span class="gesture-left">👆 Pointing Up</span>
+                        <span class="gesture-left">
+                            <div style="width: 16.8px; height: 16.8px; display: inline-block;">
+                                <img src="/images/point-up.png" alt="👆" style="width: 100%; height: 100%; object-fit: cover;" >
+                            </div>
+                                Pointing Up</span>
                         <span class="gesture-right">Activate Cursor Mode</span>
                     </div>
 
@@ -114,9 +119,9 @@
                     <div class="gesture-row">
                         <span class="gesture-left">
                             <div style="width: 16.8px; height: 16.8px; display: inline-block;">
-                                <img src="/images/three-finger.png" alt="🖐️➂" style="transform: scaleX(-1); width: 100%; height: 100%; object-fit: cover;" >
+                                <img src="/images/four-finger.png" alt="🖐️➃" style="width: 100%; height: 100%; object-fit: cover;" >
                             </div>
-                            Three Fingers Right Hand
+                            Four Fingers Right Hand
                         </span>
                         <span class="gesture-right">Seek Forward</span>
                     </div>
@@ -124,9 +129,9 @@
                     <div class="gesture-row">
                         <span class="gesture-left">
                             <div style="width: 16.8px; height: 16.8px; display: inline-block;">
-                                <img src="/images/three-finger.png" alt="🖐️➂" style="width: 100%; height: 100%; object-fit: cover;" >
+                                <img src="/images/four-finger.png" alt="🖐️➃" style="transform: scaleX(-1); width: 100%; height: 100%; object-fit: cover;" >
                             </div>
-                            Three Fingers Left Hand
+                            Four Fingers Left Hand
                         </span>
                         <span class="gesture-right">Seek Backward</span>
                     </div>
