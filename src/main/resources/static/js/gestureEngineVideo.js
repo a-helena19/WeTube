@@ -52,6 +52,11 @@ let ilyNavStartTime = null;
 let ilyNavTriggered = false;
 let ilyNavDirection = null; // "NEXT" | "BACK"
 
+const FIST_OPEN_RESTART_WINDOW = 400; // ms
+
+let fistDetectedTime = null;
+let fistOpenRestartTriggered = false;
+
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -181,6 +186,29 @@ function handleILYNavigationOnce(direction, now) {
     }
 }
 
+function handleFistOpenRestart(gestureName, now) {
+    // Schritt 1: Fist merken
+    if (gestureName === "Closed_Fist") {
+        fistDetectedTime = now;
+        fistOpenRestartTriggered = false;
+        return;
+    }
+
+    // Schritt 2: Open Palm kurz danach
+    if (
+        gestureName === "Open_Palm" &&
+        fistDetectedTime &&
+        !fistOpenRestartTriggered
+    ) {
+        const delta = now - fistDetectedTime;
+
+        if (delta <= FIST_OPEN_RESTART_WINDOW) {
+            emitGesture("RESTART_VIDEO");
+            fistOpenRestartTriggered = true;
+        }
+    }
+}
+
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 500;
     const repeatConfig = GESTURE_REPEAT[gestureName];
@@ -234,6 +262,10 @@ function resetILYNav() {
     ilyNavDirection = null;
 }
 
+function resetFistOpenRestart() {
+    fistDetectedTime = null;
+    fistOpenRestartTriggered = false;
+}
 
 // ===============================
 // FRAME LOOP
@@ -262,7 +294,7 @@ function loop() {
         ALLOWED_GESTURES.has(topGesture.categoryName) &&
         topGesture.score > 0.6
     ) {
-        console.log(topGesture, "detected");
+        handleFistOpenRestart(topGesture.categoryName, now);
         handleGestureHold(topGesture.categoryName, now);
         requestAnimationFrame(loop);
         return;
@@ -275,6 +307,7 @@ function loop() {
         resetGestureHold();
         resetILYNav();
         resetFourFingerSeek();
+        resetFistOpenRestart();
         requestAnimationFrame(loop);
         return;
     }
@@ -317,6 +350,13 @@ function loop() {
 
         requestAnimationFrame(loop);
         return;
+    }
+
+    if (
+        topGesture?.categoryName !== "Closed_Fist" &&
+        topGesture?.categoryName !== "Open_Palm"
+    ) {
+        resetFistOpenRestart();
     }
 
     resetILYNav();

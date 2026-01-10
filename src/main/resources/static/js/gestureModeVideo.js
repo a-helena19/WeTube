@@ -26,13 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         'Victory': '✌️',
         'Open_Palm': '✋',
         'SHAKA': '🤙',
-
-        'SEEK_FORWARD': '⏩',
-        'SEEK_BACKWARD': '⏪',
-
         'ILY_RIGHT_NEXT': '🤟',
         'ILY_LEFT_NEXT': '🤟'
-
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -170,6 +165,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.history.back();
                 break;
 
+            case "RESTART_VIDEO":
+                restartVideo();
+                break;
+
+
         }
     }
 
@@ -190,5 +190,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (nextVideoLink) {
             window.location.href = nextVideoLink.href;
         }
+    }
+
+    function restartVideo() {
+        const video = document.getElementById("main-video");
+        if (!video) return;
+
+        video.currentTime = 0;
+        video.play();
+
+        console.log("[VIDEO] Restarted via Fist → Open");
     }
 });
