@@ -114,6 +114,16 @@ body {
     box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
 }
 
+#camera-lock {
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    border: 1px solid #93C5FD;
+    color: #1D4ED8;
+}
+
+#camera-lock:hover {
+    opacity: 0.85;
+}
+
 .content {
     display: flex;
     justify-content: space-between;
@@ -331,4 +341,44 @@ a:hover {
 
 .hidden {
     display: none;
+}
+
+.available-gestures {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(220, 38, 38, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.available-gestures p {
+    font-weight: bold;
+    color: #DC2626;
+    margin: 0 0 8px 0;
+}
+
+.available-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #991B1B;
+}
+
+.gesture-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.gesture-left {
+    font-weight: 500;
+}
+
+.gesture-right {
+    text-align: right;
+    color: #374151;
 }

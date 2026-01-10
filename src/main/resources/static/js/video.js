@@ -1,16 +1,45 @@
 import { initVideoActions } from "./videoActions.js";
 
+const videoEl = document.getElementById("main-video");
+const feedbackEl = document.getElementById("video-feedback");
+
+const videoActions = initVideoActions(videoEl, feedbackEl);
+
+let seekCount = 0;
+let lastSeekTime = 0;
+
+const SEEK_RESET_TIME = 800;
+const SMALL_SEEK = 10;
+const LARGE_SEEK = 60;
+const SEEK_THRESHOLD = 6;
+
+window.seekVideo = function (direction) {
+    const now = performance.now();
+
+    if (now - lastSeekTime > SEEK_RESET_TIME) {
+        seekCount = 0;
+    }
+
+    seekCount++;
+    lastSeekTime = now;
+
+    const step = seekCount > SEEK_THRESHOLD ? LARGE_SEEK : SMALL_SEEK;
+    const delta = direction === "forward" ? step : -step;
+
+    videoEl.currentTime = Math.min(
+        Math.max(0, videoEl.currentTime + delta),
+        videoEl.duration || Infinity
+    );
+
+    videoActions.showSeekFeedback(delta);
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const activateCursorModeBtn = document.getElementById("activate-cursor-mode");
     const endCursorModeBtn = document.getElementById("end-cursor-mode");
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
-
-    const videoEl = document.getElementById("main-video");
-    const feedbackEl = document.getElementById("video-feedback");
-
-    const videoActions = initVideoActions(videoEl, feedbackEl);
 
     document.addEventListener("keydown", (e) => {
         if (!videoEl) return;

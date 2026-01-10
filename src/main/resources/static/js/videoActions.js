@@ -55,6 +55,9 @@ export function initVideoActions(videoEl, feedbackEl) {
         },
         showVolumeFeedback(percent) {
             showFeedback("🔊", `${percent}%`);
+        },
+        showSeekFeedback(delta) {
+            showFeedback(delta > 0 ? "⏩" : "⏪", `${Math.abs(delta)}s`);
         }
     };
 }

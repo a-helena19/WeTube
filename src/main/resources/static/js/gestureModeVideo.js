@@ -25,7 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
         'Thumb_Down': '👎',
         'Victory': '✌️',
         'Open_Palm': '✋',
-        'SHAKA': '🤙'
+        'SHAKA': '🤙',
+
+        'SEEK_FORWARD': '⏩',
+        'SEEK_BACKWARD': '⏪'
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -145,6 +148,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             case "SHAKA":
                 videoActions.toggleMute();
+                break;
+
+            case "SEEK_FORWARD":
+                seekVideo("forward");
+                break;
+
+            case "SEEK_BACKWARD":
+                seekVideo("backward");
                 break;
 
         }

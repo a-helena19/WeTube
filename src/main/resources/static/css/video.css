@@ -310,24 +310,6 @@ a:hover {
     line-height: 1.5;
 }
 
-.available-gestures {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(220, 38, 38, 0.2);
-}
-
-.available-gestures p {
-    font-weight: bold;
-    color: #DC2626;
-    margin: 0 0 8px 0;
-}
-
-.available-gestures span {
-    display: block;
-    padding: 4px 0;
-    color: #666;
-}
-
 .cursor-steps {
     margin: 0 0 20px 0;
     padding: 0 0 0 20px;
@@ -531,4 +513,44 @@ a:hover {
 
 .video-feedback.hidden {
     display: none;
+}
+
+.available-gestures {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(220, 38, 38, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.available-gestures p {
+    font-weight: bold;
+    color: #DC2626;
+    margin: 0 0 8px 0;
+}
+
+.available-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #991B1B;
+}
+
+.gesture-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.gesture-left {
+    font-weight: 500;
+}
+
+.gesture-right {
+    text-align: right;
+    color: #374151;
 }
