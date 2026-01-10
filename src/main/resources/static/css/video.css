@@ -554,3 +554,23 @@ a:hover {
     text-align: right;
     color: #374151;
 }
+
+.video-nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.video-nav-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #1f1f1f;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.video-nav-btn:hover {
+    background: #e7000b;
+}

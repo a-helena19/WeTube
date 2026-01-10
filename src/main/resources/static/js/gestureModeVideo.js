@@ -28,7 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
         'SHAKA': '🤙',
 
         'SEEK_FORWARD': '⏩',
-        'SEEK_BACKWARD': '⏪'
+        'SEEK_BACKWARD': '⏪',
+
+        'ILY_RIGHT_NEXT': '🤟',
+        'ILY_LEFT_NEXT': '🤟'
+
     };
 
     function displayRecognizedGesture(gestureName) {
@@ -158,6 +162,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 seekVideo("backward");
                 break;
 
+            case "NEXT_VIDEO":
+                goToNextVideo();
+                break;
+
+            case "BACK_VIDEO":
+                window.history.back();
+                break;
+
         }
     }
 
@@ -169,4 +181,14 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("[HOME] gesture event:", e.detail.name);
         handleGesture(e.detail.name);
     });
+
+    function goToNextVideo() {
+        const nextVideoLink = document.querySelector(
+            ".video-grid .video-card-link"
+        );
+
+        if (nextVideoLink) {
+            window.location.href = nextVideoLink.href;
+        }
+    }
 });

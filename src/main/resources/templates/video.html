@@ -59,6 +59,15 @@
                     <span th:text="${@timeUtil.getTimeAgo(currentVideo.createdAt)}">Unknown</span>
                 </p>
             </div>
+            <div class="video-nav-buttons">
+                <button id="video-back-btn" class="video-nav-btn">
+                    ⏮️ Back
+                </button>
+
+                <button id="video-next-btn" class="video-nav-btn">
+                    ⏭️ Next
+                </button>
+            </div>
 
 
             <!-- Falls keine Videos gefunden für debugging-->
@@ -100,7 +109,7 @@
                 <button class="activate-mode" id="activate-cursor-mode">Activate Cursor Mode</button>
                 <div class="available-gestures">
                     <p class="available-title">Available Gestures</p>
-                    <p class="available-text">Please Hold your hand often for 1 sec</p>
+                    <p class="available-text">Please Hold your hand often for min 1 sec</p>
 
                     <div class="gesture-row">
                         <span class="gesture-left">
@@ -149,6 +158,16 @@
                     <div class="gesture-row">
                         <span class="gesture-left">👎 Thumb Down</span>
                         <span class="gesture-right">Volume Down</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">🤟 ILY Right Hand</span>
+                        <span class="gesture-right">Next Video</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">🤟 ILY Left Hand</span>
+                        <span class="gesture-right">Back</span>
                     </div>
                 </div>
 

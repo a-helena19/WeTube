@@ -46,6 +46,12 @@ let fourFingerSeekStartTime = null;
 let fourFingerLastRepeatTime = null;
 let fourFingerActiveDirection = null; // "FORWARD" | "BACKWARD"
 
+const ILY_NAV_HOLD_TIME = 500;
+
+let ilyNavStartTime = null;
+let ilyNavTriggered = false;
+let ilyNavDirection = null; // "NEXT" | "BACK"
+
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -91,6 +97,17 @@ function isFourFinger(lm) {
     const thumbDown = lm[4].y > lm[3].y;
 
     return indexUp && middleUp && ringUp && pinkyUp && thumbDown;
+}
+
+function isILoveYou(lm) {
+    const thumbUp  = isFingerUp(lm, 4, 3);
+    const indexUp  = isFingerUp(lm, 8, 6);
+    const pinkyUp  = isFingerUp(lm, 20, 18);
+
+    const middleDown = !isFingerUp(lm, 12, 10);
+    const ringDown   = !isFingerUp(lm, 16, 14);
+
+    return thumbUp && indexUp && pinkyUp && middleDown && ringDown;
 }
 
 function isFingerUp(lm, tip, pip) {
@@ -146,6 +163,23 @@ function handleFourFingerSeek(direction, now) {
     }
 }
 
+function handleILYNavigationOnce(direction, now) {
+    if (ilyNavDirection !== direction) {
+        ilyNavDirection = direction;
+        ilyNavStartTime = now;
+        ilyNavTriggered = false;
+        return;
+    }
+
+    if (ilyNavTriggered) return;
+
+    const heldTime = now - ilyNavStartTime;
+
+    if (heldTime >= ILY_NAV_HOLD_TIME) {
+        emitGesture(direction === "NEXT" ? "NEXT_VIDEO" : "BACK_VIDEO");
+        ilyNavTriggered = true;
+    }
+}
 
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 500;
@@ -194,6 +228,12 @@ function resetFourFingerSeek() {
     fourFingerActiveDirection = null;
 }
 
+function resetILYNav() {
+    ilyNavStartTime = null;
+    ilyNavTriggered = false;
+    ilyNavDirection = null;
+}
+
 
 // ===============================
 // FRAME LOOP
@@ -233,6 +273,7 @@ function loop() {
 
     if (!result.landmarks || result.landmarks.length === 0) {
         resetGestureHold();
+        resetILYNav();
         resetFourFingerSeek();
         requestAnimationFrame(loop);
         return;
@@ -262,6 +303,23 @@ function loop() {
         return;
     }
 
+    if (isILoveYou(lm)) {
+        const handedness =
+            result.handednesses?.[0]?.[0]?.categoryName;
+
+        if (handedness === "Right") {
+            handleILYNavigationOnce("NEXT", now);
+            dispatchGestureFeedback("ILY_RIGHT_NEXT");
+        } else if (handedness === "Left") {
+            handleILYNavigationOnce("BACK", now);
+            dispatchGestureFeedback("ILY_LEFT_BACK");
+        }
+
+        requestAnimationFrame(loop);
+        return;
+    }
+
+    resetILYNav();
     resetFourFingerSeek();
     requestAnimationFrame(loop);
 }

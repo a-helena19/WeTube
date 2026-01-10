@@ -41,6 +41,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
 
+    const backBtn = document.getElementById("video-back-btn");
+    const nextBtn = document.getElementById("video-next-btn");
+
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            window.history.back();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+            const nextVideoLink = document.querySelector(
+                ".video-grid .video-card-link"
+            );
+
+            if (nextVideoLink) {
+                window.location.href = nextVideoLink.href;
+            }
+        });
+    }
+
+    videoEl.addEventListener("ended", () => {
+        if (!videoEl) return;
+        const nextVideoLink = document.querySelector(
+            ".video-grid .video-card-link"
+        );
+
+        if (nextVideoLink) {
+            const nextUrl = nextVideoLink.getAttribute("href");
+            console.log("[Autoplay] Next video:", nextUrl);
+
+            window.location.href = nextUrl;
+        } else {
+            console.log("[Autoplay] No next video found");
+        }
+    });
+
     document.addEventListener("keydown", (e) => {
         if (!videoEl) return;
 
