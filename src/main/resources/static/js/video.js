@@ -137,6 +137,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    window.addEventListener("cursorModeChanged", (e) => {
+        const active = e.detail.active;
+
+        if (active) {
+            switchToPointingMode();
+        } else {
+            switchToGestureMode();
+        }
+    });
+
+
     activateCursorModeBtn.addEventListener("click", switchToPointingMode);
     endCursorModeBtn.addEventListener("click", switchToGestureMode);
 

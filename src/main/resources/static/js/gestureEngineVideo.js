@@ -13,10 +13,23 @@ video.setAttribute("playsinline", "");
 
 let handLandmarker = null;
 let gestureRecognizer = null;
+let cursorModeActive = false;
+let cursorX = 0.5;
+let cursorY = 0.5;
+const CURSOR_SMOOTHING = 0.17;
+const CURSOR_TRACKING_ZONE = {
+    xMin: 0.2, xMax: 0.8,
+    yMin: 0.15, yMax: 0.85
+};
+let twoFingerScrollActive = false;
+let lastScrollY = 0;
+let pinchStartTime = null;
+let pinchTriggered = false;
+const PINCH_HOLD_TIME = 500;
 
 const GESTURE_HOLD_TIME = {
     Open_Palm: 500,
-    Closed_Fist: 500,
+    Closed_Fist: 600,
     Pointing_Up: 500,
     Victory: 500,
     Thumb_Up: 500,
@@ -59,6 +72,20 @@ let openPalmTriggered = false;
 
 let pinchActive = false;
 
+
+export function setCursorModeActive(active) {
+    cursorModeActive = active;
+    console.log("[GESTURE ENGINE] Cursor Mode:", active ? "ACTIVE" : "INACTIVE");
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) {
+        cursor.style.display = active ? "block" : "none";
+    }
+
+    window.dispatchEvent(new CustomEvent('cursorModeChanged', {
+        detail: { active }
+    }));
+}
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -133,7 +160,7 @@ function isShaka(lm) {
 function isPinch(lm) {
     const dx = lm[4].x - lm[8].x;
     const dy = lm[4].y - lm[8].y;
-    return Math.sqrt(dx * dx + dy * dy) < 0.04;
+    return Math.sqrt(dx * dx + dy * dy) < 0.055;
 }
 
 function dispatchGestureFeedback(name) {
@@ -281,6 +308,136 @@ function resetILYNav() {
     ilyNavDirection = null;
 }
 
+function mapHandToScreen(handX, handY) {
+    const zone = CURSOR_TRACKING_ZONE;
+    const normalizedX = (handX - zone.xMin) / (zone.xMax - zone.xMin);
+    const normalizedY = (handY - zone.yMin) / (zone.yMax - zone.yMin);
+
+    const clampedX = Math.max(0, Math.min(1, normalizedX));
+    const clampedY = Math.max(0, Math.min(1, normalizedY));
+    const mirroredX = 1 - clampedX;
+
+    cursorX = cursorX + (mirroredX - cursorX) * CURSOR_SMOOTHING;
+    cursorY = cursorY + (clampedY - cursorY) * CURSOR_SMOOTHING;
+
+    return {
+        x: cursorX * window.innerWidth,
+        y: cursorY * window.innerHeight
+    };
+}
+
+function updateVirtualCursor(x, y) {
+    console.log("cursor:", x, y);
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) {
+        cursor.style.display = "block";
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
+    }
+}
+
+function handleVideoInteraction(x, y) {
+    const el = document.elementFromPoint(x, y);
+
+    const video = el?.closest("video");
+    if (!video) return false;
+
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
+    return true;
+}
+
+function isTwoFingersUp(lm) {
+    const indexUp = lm[8].y < lm[6].y;
+    const middleUp = lm[12].y < lm[10].y;
+    const ringDown = lm[16].y > lm[14].y;
+    const pinkyDown = lm[20].y > lm[18].y;
+    return indexUp && middleUp && ringDown && pinkyDown;
+}
+
+
+function handleElementClick(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return;
+
+    const clickable = el.closest(
+        "button, a, .video-card, .video-card-link, [role='button']"
+    );
+
+    if (clickable) {
+        clickable.click();
+        console.log("Clicked:", clickable);
+    }
+}
+
+let scrollVelocity = 0;
+
+function handleTwoFingerScroll(lm) {
+    const y = lm[12].y;
+
+    if (!twoFingerScrollActive) {
+        twoFingerScrollActive = true;
+        lastScrollY = y;
+        scrollVelocity = 0;
+        return;
+    }
+
+    const delta = y - lastScrollY;
+    lastScrollY = y;
+
+    if (Math.abs(delta) < 0.0015) return;
+
+    scrollVelocity = scrollVelocity * 0.8 + delta * 40;
+
+    window.scrollBy({
+        top: -scrollVelocity * 25,
+        behavior: "auto"
+    });
+}
+
+
+function processCursorMode(lm) {
+    const pos = mapHandToScreen(lm[8].x, lm[8].y);
+    updateVirtualCursor(pos.x, pos.y);
+
+    const pinching = isPinch(lm);
+
+    if (pinching) {
+        if (!pinchStartTime) {
+            pinchStartTime = performance.now();
+            pinchTriggered = false;
+        }
+
+        const heldTime = performance.now() - pinchStartTime;
+
+        if (!pinchTriggered && heldTime >= PINCH_HOLD_TIME) {
+            const handledVideo = handleVideoInteraction(pos.x, pos.y);
+
+            if (!handledVideo) {
+                handleElementClick(pos.x, pos.y);
+            }
+
+            pinchTriggered = true;
+        }
+    } else {
+        pinchStartTime = null;
+        pinchTriggered = false;
+        const cursor = document.getElementById("virtual-cursor");
+        if (cursor) cursor.style.transform = "scale(1)";
+    }
+
+
+    if (isTwoFingersUp(lm)) {
+        handleTwoFingerScroll(lm);
+    } else {
+        twoFingerScrollActive = false;
+    }
+}
+
+
 // ===============================
 // FRAME LOOP
 // ===============================
@@ -293,6 +450,25 @@ function loop() {
 
     const topGesture =
         gestureResult.gestures?.[0]?.[0] || null;
+
+    if (topGesture?.categoryName === "Pointing_Up" && topGesture.score > 0.7) {
+        setCursorModeActive(true);
+    }
+
+    if (topGesture?.categoryName === "Closed_Fist" && topGesture.score > 0.7) {
+        setCursorModeActive(false);
+    }
+
+    const result = handLandmarker.detectForVideo(video, now);
+
+    if (cursorModeActive && result.landmarks?.length) {
+        processCursorMode(result.landmarks[0]);
+        requestAnimationFrame(loop);
+        return;
+    }
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) cursor.style.display = "none";
 
     if (topGesture?.categoryName === "Open_Palm" && topGesture.score > 0.6) {
         handleOpenPalmFullscreen(now);
@@ -317,11 +493,8 @@ function loop() {
     ) {
         handleGestureHold(topGesture.categoryName, now);
         requestAnimationFrame(loop);
-        return; ////////////////////////
+        return;
     }
-
-    const result =
-        handLandmarker.detectForVideo(video, now);
 
     if (!result.landmarks || result.landmarks.length === 0) {
         resetGestureHold();
