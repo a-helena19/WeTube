@@ -186,15 +186,12 @@ function handleElementClick(x, y) {
     }
 }
 
-let scrollVelocity = 0;
-
 function handleTwoFingerScroll(lm) {
     const y = lm[12].y;
 
     if (!twoFingerScrollActive) {
         twoFingerScrollActive = true;
         lastScrollY = y;
-        scrollVelocity = 0;
         return;
     }
 
@@ -202,15 +199,13 @@ function handleTwoFingerScroll(lm) {
     lastScrollY = y;
 
     if (Math.abs(delta) < 0.0015) return;
-
-    scrollVelocity = scrollVelocity * 0.8 + delta * 40;
+    const scrollAmount = -delta * 800;
 
     window.scrollBy({
-        top: -scrollVelocity * 25,
+        top: scrollAmount,
         behavior: "auto"
     });
 }
-
 
 function processCursorMode(lm) {
     const pos = mapHandToScreen(lm[8].x, lm[8].y);

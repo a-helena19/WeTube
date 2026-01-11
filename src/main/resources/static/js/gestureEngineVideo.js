@@ -381,7 +381,6 @@ function handleTwoFingerScroll(lm) {
     if (!twoFingerScrollActive) {
         twoFingerScrollActive = true;
         lastScrollY = y;
-        scrollVelocity = 0;
         return;
     }
 
@@ -389,11 +388,10 @@ function handleTwoFingerScroll(lm) {
     lastScrollY = y;
 
     if (Math.abs(delta) < 0.0015) return;
-
-    scrollVelocity = scrollVelocity * 0.8 + delta * 40;
+    const scrollAmount = -delta * 900;
 
     window.scrollBy({
-        top: -scrollVelocity * 25,
+        top: scrollAmount,
         behavior: "auto"
     });
 }
