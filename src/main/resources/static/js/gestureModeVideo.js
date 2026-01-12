@@ -5,6 +5,11 @@ const feedbackEl = document.getElementById("video-feedback");
 
 const videoActions = initVideoActions(videoEl, feedbackEl);
 
+window.uiState = {
+    fakeFullscreenActive: false,
+    cursorModeActive: false
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
@@ -14,12 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const controlsEl = document.getElementById("cursor-video-controls");
     const exitBtn = document.getElementById("fake-fullscreen-exit");
 
-    let cursorModeActive = false;
     let gestureLock = false;
 
     let gestureClearTimeout = null;
-
-    let fakeFullscreenActive = false;
 
 
     const gestureEmojis = {
@@ -67,9 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===========================
 
     function activateCursorMode() {
-        if (cursorModeActive) return;
+        if (window.uiState.cursorModeActive) return;
 
-        cursorModeActive = true;
+        window.uiState.cursorModeActive = true;
         gestureLock = true;
 
         gestureControls.classList.add("hidden");
@@ -82,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         controlsEl?.classList.remove("hidden");
 
-        if (fakeFullscreenActive) {
+        if (window.uiState.fakeFullscreenActive) {
             exitBtn?.classList.remove("hidden");
         }
 
@@ -96,9 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function deactivateCursorMode() {
-        if (!cursorModeActive) return;
+        if (!window.uiState.cursorModeActive) return;
 
-        cursorModeActive = false;
+        window.uiState.cursorModeActive = false;
         gestureLock = false;
 
         cursorControls.classList.add("hidden");
@@ -196,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
 
             case "TOGGLE_FAKE_FULLSCREEN":
-                toggleFakeFullscreen();
+                toggleFakeFullscreenOpenPalm();
                 break;
 
 
@@ -207,7 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // EVENT LISTENER
     // ===========================
     exitBtn.addEventListener("click", () => {
-        fakeFullscreenActive = false;
+        const state = window.uiState;
+
+        state.fakeFullscreenActive = false;
+
         document
             .querySelector(".video-player")
             .classList.remove("fake-fullscreen");
@@ -239,19 +244,25 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("[VIDEO] Restarted via Fist → Open");
     }
 
-    function toggleFakeFullscreen() {
+    function toggleFakeFullscreenOpenPalm() {
         const videoPlayer = document.querySelector(".video-player");
         const feedback = document.getElementById("video-feedback");
 
         if (!videoPlayer) return;
 
-        fakeFullscreenActive = !fakeFullscreenActive;
-        videoPlayer.classList.toggle("fake-fullscreen", fakeFullscreenActive);
+        const state = window.uiState;
 
-        if (fakeFullscreenActive && cursorModeActive) {
-            exitBtn.classList.remove("hidden");
+        state.fakeFullscreenActive = !state.fakeFullscreenActive;
+
+        videoPlayer.classList.toggle(
+            "fake-fullscreen",
+            state.fakeFullscreenActive
+        );
+
+        if (state.fakeFullscreenActive && state.cursorModeActive) {
+            exitBtn?.classList.remove("hidden");
         } else {
-            exitBtn.classList.add("hidden");
+            exitBtn?.classList.add("hidden");
         }
 
         showFullscreenHint(feedback);
@@ -260,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showFullscreenHint(feedback) {
         if (!feedback) return;
 
-        feedback.textContent = fakeFullscreenActive
+        feedback.textContent = window.uiState.fakeFullscreenActive
             ? "🖐 Open hand to close"
             : "🖐 Open hand to expand";
 

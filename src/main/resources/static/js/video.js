@@ -52,9 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnFullscreen = document.getElementById("fullscreen");
     const volumeSteps = document.querySelectorAll(".volume-step");
 
-    let fakeFullscreenActive = false;
-    let cursorModeActive = false;
-
     if (backBtn) {
         backBtn.addEventListener("click", () => {
             window.history.back();
@@ -141,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = '<span>Cursor Mode</span>';
         }
 
-        cursorModeActive = true;
+        window.uiState.cursorModeActive = true;
     }
 
     function switchToGestureMode() {
@@ -156,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.className = "gesture-badge";
             modeBadge.innerHTML = '<span>Gesture Mode</span>';
         }
-        cursorModeActive = false;
+        window.uiState.cursorModeActive = false;
     }
 
     window.addEventListener("cursorModeChanged", (e) => {
@@ -246,10 +243,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!videoPlayer) return;
 
-        fakeFullscreenActive = !fakeFullscreenActive;
-        videoPlayer.classList.toggle("fake-fullscreen", fakeFullscreenActive);
+        let state = window.uiState;
 
-        if (fakeFullscreenActive && cursorModeActive) {
+        state.fakeFullscreenActive = !state.fakeFullscreenActive;
+        videoPlayer.classList.toggle("fake-fullscreen", state.fakeFullscreenActive);
+
+        if (state.fakeFullscreenActive && state.cursorModeActive) {
             exitBtn.classList.remove("hidden");
         } else {
             exitBtn.classList.add("hidden");
