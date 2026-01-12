@@ -287,22 +287,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function toggleFakeFullscreen() {
-        const exitBtn = document.getElementById("fake-fullscreen-exit");
-        const videoPlayer = document.querySelector(".video-player");
+        const videoPlayerContainer = document.querySelector(".video-player-container");
 
-        if (!videoPlayer) return;
+        if (!videoPlayerContainer) return;
 
         let state = window.uiState;
 
         state.fakeFullscreenActive = !state.fakeFullscreenActive;
-        videoPlayer.classList.toggle("fake-fullscreen", state.fakeFullscreenActive);
+        videoPlayerContainer.classList.toggle("fake-fullscreen", state.fakeFullscreenActive);
+        document.body.classList.toggle("fake-fullscreen-active", state.fakeFullscreenActive);
 
-        if (state.fakeFullscreenActive && state.cursorModeActive) {
-            exitBtn.classList.remove("hidden");
+        // Fullscreen Gesture Badge erstellen/entfernen
+        manageFullscreenGestureBadge(state.fakeFullscreenActive);
+    }
+
+    function manageFullscreenGestureBadge(isFullscreen) {
+        let fullscreenBadge = document.getElementById("fullscreen-gesture-badge");
+        const originalBadge = document.getElementById("gesture-badge");
+
+        if (isFullscreen) {
+            if (!fullscreenBadge) {
+                fullscreenBadge = document.createElement("div");
+                fullscreenBadge.id = "fullscreen-gesture-badge";
+                fullscreenBadge.className = "fullscreen-gesture-badge";
+                fullscreenBadge.style.display = "none";
+                document.body.appendChild(fullscreenBadge);
+            }
+
+            // Observer für das Original-Badge
+            const observer = new MutationObserver(() => {
+                if (originalBadge && originalBadge.style.display !== "none" && originalBadge.innerHTML) {
+                    fullscreenBadge.innerHTML = originalBadge.innerHTML;
+                    fullscreenBadge.style.display = "flex";
+                } else {
+                    fullscreenBadge.style.display = "none";
+                }
+            });
+
+            if (originalBadge) {
+                observer.observe(originalBadge, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                    attributeFilter: ['style']
+                });
+            }
+
+            window.fullscreenBadgeObserver = observer;
         } else {
-            exitBtn.classList.add("hidden");
+            if (fullscreenBadge) {
+                fullscreenBadge.remove();
+            }
+            if (window.fullscreenBadgeObserver) {
+                window.fullscreenBadgeObserver.disconnect();
+                window.fullscreenBadgeObserver = null;
+            }
         }
-
     }
 
 });

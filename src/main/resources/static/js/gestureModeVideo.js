@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const modeBadge = document.getElementById("mode-badge");
     const gestureBadge = document.getElementById('gesture-badge');
     const videoEl = document.getElementById("main-video");
-    const exitBtn = document.getElementById("fake-fullscreen-exit");
 
     let gestureLock = false;
 
@@ -81,9 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Cursor Mode</span>";
         }
 
-        if (window.uiState.fakeFullscreenActive) {
-            exitBtn?.classList.remove("hidden");
-        }
 
         window.dispatchEvent(
             new CustomEvent("cursorModeChanged", {
@@ -108,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Gesture Mode</span>";
         }
 
-        exitBtn?.classList.add("hidden");
 
         window.dispatchEvent(
             new CustomEvent("cursorModeChanged", {
@@ -202,16 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===========================
     // EVENT LISTENER
     // ===========================
-    exitBtn.addEventListener("click", () => {
-        const state = window.uiState;
-
-        state.fakeFullscreenActive = false;
-
-        document
-            .querySelector(".video-player")
-            .classList.remove("fake-fullscreen");
-        exitBtn.classList.add("hidden");
-    });
 
     window.addEventListener("gesture", (e) => {
         handleGesture(e.detail.name);
@@ -236,27 +221,70 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function toggleFakeFullscreenOpenPalm() {
-        const videoPlayer = document.querySelector(".video-player");
+        const videoPlayerContainer = document.querySelector(".video-player-container");
         const feedback = document.getElementById("video-feedback");
 
-        if (!videoPlayer) return;
+        if (!videoPlayerContainer) return;
 
         const state = window.uiState;
 
         state.fakeFullscreenActive = !state.fakeFullscreenActive;
 
-        videoPlayer.classList.toggle(
+        videoPlayerContainer.classList.toggle(
             "fake-fullscreen",
             state.fakeFullscreenActive
         );
 
-        if (state.fakeFullscreenActive && state.cursorModeActive) {
-            exitBtn?.classList.remove("hidden");
-        } else {
-            exitBtn?.classList.add("hidden");
-        }
+        document.body.classList.toggle("fake-fullscreen-active", state.fakeFullscreenActive);
+
+        // Fullscreen Gesture Badge erstellen/entfernen
+        manageFullscreenGestureBadge(state.fakeFullscreenActive);
 
         showFullscreenHint(feedback);
+    }
+
+    function manageFullscreenGestureBadge(isFullscreen) {
+        let fullscreenBadge = document.getElementById("fullscreen-gesture-badge");
+        const originalBadge = document.getElementById("gesture-badge");
+
+        if (isFullscreen) {
+            if (!fullscreenBadge) {
+                fullscreenBadge = document.createElement("div");
+                fullscreenBadge.id = "fullscreen-gesture-badge";
+                fullscreenBadge.className = "fullscreen-gesture-badge";
+                fullscreenBadge.style.display = "none";
+                document.body.appendChild(fullscreenBadge);
+            }
+
+            // Observer für das Original-Badge
+            const observer = new MutationObserver(() => {
+                if (originalBadge && originalBadge.style.display !== "none" && originalBadge.innerHTML) {
+                    fullscreenBadge.innerHTML = originalBadge.innerHTML;
+                    fullscreenBadge.style.display = "flex";
+                } else {
+                    fullscreenBadge.style.display = "none";
+                }
+            });
+
+            if (originalBadge) {
+                observer.observe(originalBadge, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                    attributeFilter: ['style']
+                });
+            }
+
+            window.fullscreenBadgeObserver = observer;
+        } else {
+            if (fullscreenBadge) {
+                fullscreenBadge.remove();
+            }
+            if (window.fullscreenBadgeObserver) {
+                window.fullscreenBadgeObserver.disconnect();
+                window.fullscreenBadgeObserver = null;
+            }
+        }
     }
 
     function showFullscreenHint(feedback) {
