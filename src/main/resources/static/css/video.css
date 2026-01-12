@@ -120,7 +120,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 12px;
 }
 
 .video-page .video-player {
@@ -417,11 +417,6 @@ a:hover {
 }
 
 
-.hidden {
-    display: none;
-}
-
-
 @media (max-width: 480px) {
     .content {
         padding: 12px;
@@ -583,13 +578,153 @@ a:hover {
     height: 100vh;
     z-index: 9998;
 
+    display: flex;
+    flex-direction: column;
+
     background: black;
     border-radius: 0;
 }
 
 .video-player.fake-fullscreen #main-video {
     width: 100%;
-    height: 100%;
+    flex: 1;                 /* nimmt verfügbaren Platz */
     object-fit: contain;
     border-radius: 0;
+}
+
+.video-player.fake-fullscreen + .controls {
+    position: relative;
+    background: #f9f9f9;
+    border-radius: 0;
+}
+
+.fake-fullscreen-exit {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hidden {
+    display: none;
+}
+
+/* =========================
+   VIDEO PLAYER CONTROLS
+   ========================= */
+
+.controls {
+    /*margin-top: 5px;*/
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    width: 100%;
+}
+
+/* Spacer vor rechter Gruppe */
+#mute {
+    margin-left: auto;
+}
+
+/* Volume & Fullscreen dicht zusammen */
+#volume-grid, #fullscreen {
+    margin-left: 6px;
+}
+
+/* Alle Buttons */
+.controls button {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 5px 9px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover */
+.controls button:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+/* Active (Klick) */
+.controls button:active {
+    transform: scale(0.95);
+}
+
+/* Play Button etwas hervorheben */
+#play {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+#play:hover {
+    background: #e7000b;
+    border-color: #e7000b;
+}
+
+/* Lautstärke Slider */
+.controls input[type="range"] {
+    width: 90px;
+    height: 3px;
+    accent-color: #111827;
+    cursor: pointer;
+}
+
+/* Fullscreen Button leicht größer */
+#fullscreen {
+    font-size: 15px;
+}
+
+.volume-grid {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 26px;
+    padding: 0 4px;
+}
+
+/* einzelne Stufe */
+.volume-step {
+    width: 8px;
+    border-radius: 3px;
+    background: #d1d5db; /* neutral grau */
+    cursor: pointer;
+    transition:
+            background-color 0.15s ease,
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+/* Höhen */
+.volume-step:nth-child(1) { height: 20%; }
+.volume-step:nth-child(2) { height: 40%; }
+.volume-step:nth-child(3) { height: 60%; }
+.volume-step:nth-child(4) { height: 80%; }
+.volume-step:nth-child(5) { height: 100%; }
+
+/* Hover (Cursor sichtbar, aber nicht dominant) */
+.volume-step:hover {
+    background: #9ca3af;
+    transform: scaleY(1.15);
+}
+
+/* Aktive Lautstärke */
+.volume-step.active {
+    background: #7C3AEDFF;
+    box-shadow: 0 0 6px rgb(68, 26, 138);
 }

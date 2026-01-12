@@ -41,8 +41,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
 
-    const backBtn = document.getElementById("video-back-btn");
-    const nextBtn = document.getElementById("video-next-btn");
+    const backBtn = document.querySelector(".video-back");
+    const nextBtn = document.querySelector(".video-next");
+
+    const btnRestart = document.getElementById("restart");
+    const btnRewind = document.getElementById("rewind");
+    const btnPlay = document.getElementById("play");
+    const btnForward = document.getElementById("forward");
+    const btnMute = document.getElementById("mute");
+    const btnFullscreen = document.getElementById("fullscreen");
+    const volumeSteps = document.querySelectorAll(".volume-step");
+
+    let fakeFullscreenActive = false;
+    let cursorModeActive = false;
 
     if (backBtn) {
         backBtn.addEventListener("click", () => {
@@ -121,20 +132,31 @@ document.addEventListener("DOMContentLoaded", () => {
         gestureControls.classList.add("hidden");
         cursorControls.classList.remove("hidden");
 
+        document
+            .getElementById("cursor-video-controls")
+            ?.classList.remove("hidden");
+
         if (modeBadge) {
             modeBadge.className = "pointing-badge";
             modeBadge.innerHTML = '<span>Cursor Mode</span>';
         }
+
+        cursorModeActive = true;
     }
 
     function switchToGestureMode() {
         cursorControls.classList.add("hidden");
         gestureControls.classList.remove("hidden");
 
+        document
+            .getElementById("cursor-video-controls")
+            ?.classList.add("hidden");
+
         if (modeBadge) {
             modeBadge.className = "gesture-badge";
             modeBadge.innerHTML = '<span>Gesture Mode</span>';
         }
+        cursorModeActive = false;
     }
 
     window.addEventListener("cursorModeChanged", (e) => {
@@ -172,4 +194,67 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.style.transform = "scale(1)";
         });
     }
+
+
+    btnRestart.onclick = () => {
+        videoEl.currentTime = 0;
+        videoEl.play();
+        videoActions.showSeekFeedback(0);
+    };
+
+    btnPlay.onclick = () => videoActions.playPause();
+
+    btnRewind.onclick = () => seekVideo("backward");
+    btnForward.onclick = () => seekVideo("forward");
+
+    btnMute.onclick = () => {
+        videoActions.toggleMute();
+        videoActions.showMuteFeedback();
+    };
+
+    function updateVolumeGrid() {
+        volumeSteps.forEach(step => {
+            const stepVolume = parseFloat(step.dataset.volume);
+            step.classList.toggle(
+                "active",
+                videoEl.volume >= stepVolume - 0.01
+            );
+        });
+    }
+
+    volumeSteps.forEach(step => {
+        step.addEventListener("click", () => {
+            const volume = parseFloat(step.dataset.volume);
+            videoEl.volume = volume;
+            videoEl.muted = false;
+
+            updateVolumeGrid();
+            videoActions.showVolumeFeedback(Math.round(volume * 100));
+        });
+    });
+
+    videoEl.addEventListener("volumechange", updateVolumeGrid);
+    updateVolumeGrid();
+
+
+    btnFullscreen.onclick = () => toggleFakeFullscreen();
+
+
+    function toggleFakeFullscreen() {
+        const exitBtn = document.getElementById("fake-fullscreen-exit");
+        const videoPlayer = document.querySelector(".video-player");
+
+        if (!videoPlayer) return;
+
+        fakeFullscreenActive = !fakeFullscreenActive;
+        videoPlayer.classList.toggle("fake-fullscreen", fakeFullscreenActive);
+
+        if (fakeFullscreenActive && cursorModeActive) {
+            exitBtn.classList.remove("hidden");
+        } else {
+            exitBtn.classList.add("hidden");
+        }
+
+    }
+
 });

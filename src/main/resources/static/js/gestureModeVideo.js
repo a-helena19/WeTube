@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modeBadge = document.getElementById("mode-badge");
     const gestureBadge = document.getElementById('gesture-badge');
     const videoEl = document.getElementById("main-video");
+    const controlsEl = document.getElementById("cursor-video-controls");
+    const exitBtn = document.getElementById("fake-fullscreen-exit");
 
     let cursorModeActive = false;
     let gestureLock = false;
@@ -78,7 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Cursor Mode</span>";
         }
 
-        console.log("[HOME] Cursor Mode aktiviert");
+        controlsEl?.classList.remove("hidden");
+
+        if (fakeFullscreenActive) {
+            exitBtn?.classList.remove("hidden");
+        }
+
+        window.dispatchEvent(
+            new CustomEvent("cursorModeChanged", {
+                detail: { active: true }
+            })
+        );
+
+
     }
 
     function deactivateCursorMode() {
@@ -95,7 +109,14 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Gesture Mode</span>";
         }
 
-        console.log("[HOME] Cursor Mode deaktiviert");
+        controlsEl?.classList.add("hidden");
+        exitBtn?.classList.add("hidden");
+
+        window.dispatchEvent(
+            new CustomEvent("cursorModeChanged", {
+                detail: { active: false }
+            })
+        );
     }
 
     const VOLUME_STEP = 0.1;
@@ -185,6 +206,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===========================
     // EVENT LISTENER
     // ===========================
+    exitBtn.addEventListener("click", () => {
+        fakeFullscreenActive = false;
+        document
+            .querySelector(".video-player")
+            .classList.remove("fake-fullscreen");
+        exitBtn.classList.add("hidden");
+    });
 
     window.addEventListener("gesture", (e) => {
         console.log("[HOME] gesture event:", e.detail.name);
@@ -219,6 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fakeFullscreenActive = !fakeFullscreenActive;
         videoPlayer.classList.toggle("fake-fullscreen", fakeFullscreenActive);
+
+        if (fakeFullscreenActive && cursorModeActive) {
+            exitBtn.classList.remove("hidden");
+        } else {
+            exitBtn.classList.add("hidden");
+        }
 
         showFullscreenHint(feedback);
     }
