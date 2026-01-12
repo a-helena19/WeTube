@@ -52,6 +52,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnFullscreen = document.getElementById("fullscreen");
     const volumeSteps = document.querySelectorAll(".volume-step");
 
+    const progressContainer = document.getElementById("progress-container");
+    const progressPlayed = document.querySelector(".progress-played");
+    const progressBuffered = document.querySelector(".progress-buffered");
+    const timeDisplay = document.getElementById("time-display");
+
+    updateMuteIcon();
+
+    videoEl.addEventListener("timeupdate", () => {
+        const percent = (videoEl.currentTime / videoEl.duration) * 100;
+        progressPlayed.style.width = `${percent}%`;
+    });
+
+    videoEl.addEventListener("progress", () => {
+        if (videoEl.buffered.length > 0) {
+            const bufferedEnd = videoEl.buffered.end(videoEl.buffered.length - 1);
+            const percent = (bufferedEnd / videoEl.duration) * 100;
+            progressBuffered.style.width = `${percent}%`;
+        }
+    });
+
+    progressContainer.addEventListener("click", (e) => {
+        const rect = progressContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const percent = clickX / rect.width;
+
+        videoEl.currentTime = percent * videoEl.duration;
+    });
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+    }
+
+    videoEl.addEventListener("timeupdate", () => {
+        timeDisplay.textContent =
+            `${formatTime(videoEl.currentTime)} / ${formatTime(videoEl.duration)}`;
+    });
+
+
     if (backBtn) {
         backBtn.addEventListener("click", () => {
             window.history.back();
@@ -129,10 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
         gestureControls.classList.add("hidden");
         cursorControls.classList.remove("hidden");
 
-        document
-            .getElementById("cursor-video-controls")
-            ?.classList.remove("hidden");
-
         if (modeBadge) {
             modeBadge.className = "pointing-badge";
             modeBadge.innerHTML = '<span>Cursor Mode</span>';
@@ -144,10 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function switchToGestureMode() {
         cursorControls.classList.add("hidden");
         gestureControls.classList.remove("hidden");
-
-        document
-            .getElementById("cursor-video-controls")
-            ?.classList.add("hidden");
 
         if (modeBadge) {
             modeBadge.className = "gesture-badge";
@@ -206,8 +238,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btnMute.onclick = () => {
         videoActions.toggleMute();
+        updateMuteIcon();
         videoActions.showMuteFeedback();
     };
+
+    function updateMuteIcon() {
+        if (!btnMute) return;
+
+        btnMute.textContent = videoEl.muted || videoEl.volume === 0
+            ? "🔇"
+            : "🔊";
+    }
+
+    videoEl.addEventListener("volumechange", updateMuteIcon);
 
     function updateVolumeGrid() {
         volumeSteps.forEach(step => {

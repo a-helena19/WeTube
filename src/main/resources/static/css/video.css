@@ -725,6 +725,35 @@ a:hover {
 
 /* Aktive Lautstärke */
 .volume-step.active {
-    background: #7C3AEDFF;
-    box-shadow: 0 0 6px rgb(68, 26, 138);
+    background: #c63e3e;
+    box-shadow: 0 0 6px rgb(163, 36, 36);
+}
+
+.progress-container {
+    position: relative;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    cursor: pointer;
+    overflow: hidden;
+    margin: 8px 0 10px 0;
+}
+
+.progress-buffered {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: #d1d5db;
+}
+
+.progress-played {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: #e7000b; /* WeTube Rot */
+}
+
+/* Hover – größer für Cursor */
+.progress-container:hover {
+    height: 10px;
 }

@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const modeBadge = document.getElementById("mode-badge");
     const gestureBadge = document.getElementById('gesture-badge');
     const videoEl = document.getElementById("main-video");
-    const controlsEl = document.getElementById("cursor-video-controls");
     const exitBtn = document.getElementById("fake-fullscreen-exit");
 
     let gestureLock = false;
@@ -82,8 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Cursor Mode</span>";
         }
 
-        controlsEl?.classList.remove("hidden");
-
         if (window.uiState.fakeFullscreenActive) {
             exitBtn?.classList.remove("hidden");
         }
@@ -111,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Gesture Mode</span>";
         }
 
-        controlsEl?.classList.add("hidden");
         exitBtn?.classList.add("hidden");
 
         window.dispatchEvent(
