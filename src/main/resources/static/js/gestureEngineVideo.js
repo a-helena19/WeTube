@@ -75,7 +75,6 @@ let pinchActive = false;
 
 export function setCursorModeActive(active) {
     cursorModeActive = active;
-    console.log("[GESTURE ENGINE] Cursor Mode:", active ? "ACTIVE" : "INACTIVE");
 
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) {
@@ -223,7 +222,7 @@ function handlePinchRestart(lm) {
     if (isPinch(lm)) {
         if (!pinchActive) {
             emitGesture("RESTART_VIDEO");
-            dispatchGestureFeedback("RESTART_VIDEO");
+            dispatchGestureFeedback("PINCH");
             pinchActive = true;
         }
     } else {
@@ -327,7 +326,6 @@ function mapHandToScreen(handX, handY) {
 }
 
 function updateVirtualCursor(x, y) {
-    console.log("cursor:", x, y);
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) {
         cursor.style.display = "block";
@@ -369,7 +367,6 @@ function handleElementClick(x, y) {
 
     if (clickable) {
         clickable.click();
-        console.log("Clicked:", clickable);
     }
 }
 

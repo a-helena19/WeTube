@@ -1,4 +1,4 @@
-import { initVideoActions } from "./videoActions.js";
+import {initVideoActions} from "./videoActions.js";
 
 const videoEl = document.getElementById("main-video");
 const feedbackEl = document.getElementById("video-feedback");
@@ -117,12 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (nextVideoLink) {
-            const nextUrl = nextVideoLink.getAttribute("href");
-            console.log("[Autoplay] Next video:", nextUrl);
-
-            window.location.href = nextUrl;
-        } else {
-            console.log("[Autoplay] No next video found");
+            window.location.href = nextVideoLink.getAttribute("href");
         }
     });
 
@@ -253,6 +248,17 @@ document.addEventListener("DOMContentLoaded", () => {
     videoEl.addEventListener("volumechange", updateMuteIcon);
 
     function updateVolumeGrid() {
+        const grid = document.getElementById("volume-grid");
+        if (!grid) return;
+
+        if (videoEl.muted) {
+            grid.classList.add("muted");
+            volumeSteps.forEach(step => step.classList.remove("active"));
+            return;
+        }
+
+        grid.classList.remove("muted");
+
         volumeSteps.forEach(step => {
             const stepVolume = parseFloat(step.dataset.volume);
             step.classList.toggle(
@@ -265,8 +271,8 @@ document.addEventListener("DOMContentLoaded", () => {
     volumeSteps.forEach(step => {
         step.addEventListener("click", () => {
             const volume = parseFloat(step.dataset.volume);
-            videoEl.volume = volume;
             videoEl.muted = false;
+            videoEl.volume = volume;
 
             updateVolumeGrid();
             videoActions.showVolumeFeedback(Math.round(volume * 100));

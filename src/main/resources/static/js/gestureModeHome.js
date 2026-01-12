@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Cursor Mode</span>";
         }
 
-        console.log("[HOME] Cursor Mode aktiviert");
     }
 
     function deactivateCursorMode() {
@@ -80,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Gesture Mode</span>";
         }
 
-        console.log("[HOME] Cursor Mode deaktiviert");
     }
 
     // ===========================
@@ -90,8 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleGesture(gesture) {
         if (!gesture) return;
         if (gestureLock && gesture !== "Closed_Fist") return;
-
-        console.log("[HOME] handleGesture:", gesture);
 
         switch (gesture) {
             case "Pointing_Up":
@@ -109,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===========================
 
     window.addEventListener("gesture", (e) => {
-        console.log("[HOME] gesture event:", e.detail.name);
         handleGesture(e.detail.name);
     });
 });

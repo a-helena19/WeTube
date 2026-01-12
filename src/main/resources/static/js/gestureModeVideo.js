@@ -146,8 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!gesture) return;
         if (gestureLock && gesture !== "Closed_Fist") return;
 
-        console.log("[HOME] handleGesture:", gesture);
-
         switch (gesture) {
             case "Pointing_Up":
                 activateCursorMode();
@@ -216,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.addEventListener("gesture", (e) => {
-        console.log("[HOME] gesture event:", e.detail.name);
         handleGesture(e.detail.name);
     });
 
@@ -236,8 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         video.currentTime = 0;
         video.play();
-
-        console.log("[VIDEO] Restarted via Fist → Open");
     }
 
     function toggleFakeFullscreenOpenPalm() {

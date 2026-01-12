@@ -35,7 +35,6 @@ const PINCH_HOLD_TIME = 500;
 
 export function setCursorModeActive(active) {
     cursorModeActive = active;
-    console.log("[GESTURE ENGINE] Cursor Mode:", active ? "ACTIVE" : "INACTIVE");
 
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) {
@@ -52,8 +51,6 @@ async function initGestureEngineHome() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     await video.play();
-
-    console.log("[GestureEngineHome] Camera started");
 
     const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
@@ -77,7 +74,6 @@ async function initGestureEngineHome() {
         numHands: 1
     });
 
-    console.log("[GestureEngineHome] Models ready");
     requestAnimationFrame(loop);
 }
 
@@ -139,7 +135,6 @@ function mapHandToScreen(handX, handY) {
 }
 
 function updateVirtualCursor(x, y) {
-    console.log("cursor:", x, y);
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) {
         cursor.style.display = "block";
@@ -182,7 +177,6 @@ function handleElementClick(x, y) {
 
     if (clickable) {
         clickable.click();
-        console.log("Clicked:", clickable);
     }
 }
 

@@ -28,7 +28,7 @@
                 <span>🔓🔒 Disable Camera & Gestures</span>
             </div>
 
-            <div class="gesture-badge" id="mode-badge">
+            <div class="gesture-badge" id="mode-badge" role="button">
                 <span>Gesture Mode</span>
             </div>
         </div>
@@ -61,11 +61,17 @@
                 <button class="activate-mode" id="activate-cursor-mode">Activate Cursor Mode</button>
                 <div class="available-gestures">
                     <p class="available-title">Available Gestures</p>
-                    <p class="available-text">Please Hold your hand often for min 1 sec</p>
+                    <div class="available-hint">Please hold each gesture for about one second to ensure accurate recognition.</div>
 
-                    <div class="gesture-row">
-                        <span class="gesture-left">👆 Pointing Up</span>
-                        <span class="gesture-right">Activate Cursor Mode</span>
+                    <div class="available-gestures-container">
+                        <div class="gesture-row">
+                        <span class="gesture-left">
+                            <div style="width: 16.8px; height: 16.8px; display: inline-block;">
+                                <img src="/images/point-up.png" alt="👆" style="width: 100%; height: 100%; object-fit: cover;" >
+                            </div>
+                                Pointing Up</span>
+                            <span class="gesture-right">Activate Cursor Mode</span>
+                        </div>
                     </div>
 
                 </div>

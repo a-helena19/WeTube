@@ -5,18 +5,46 @@ body {
     background-color: #FFFFFF;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:visited {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
 .container {
     display: flex;
     flex-direction: column;
 }
 
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+
+    padding: 8px 16px;
+    height: 56px;
+
     background-color: #FFFFFF;
     border-bottom: 1px solid #E5E7EB;
+    z-index: 1000;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
 }
 
 .logo-section img {
@@ -29,13 +57,13 @@ body {
 
 .search-bar {
     position: absolute;
-    left: 50%;
+    left: 40%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 0;
-    width: 500px;
-    max-width: 500px;
+    width: 650px;
+    max-width: 650px;
 }
 
 .search-input {
@@ -53,13 +81,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 46px;
-    height: 46px;
+    width: 64px;
+    height: 40px;
     background-color: #E7000B;
     border: none;
     border-radius: 0 24px 24px 0;
     cursor: pointer;
-    padding: 0;
 }
 
 .search-icon {
@@ -70,32 +97,32 @@ body {
     -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>');
 }
 
-.gesture-badge, .pointing-badge {
+.gesture-badge {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
-    border-radius: 24px;
-    font-weight: 600;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.gesture-badge {
     background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    padding: 6px 12px;
     border: 1px solid #FECACA;
+    border-radius: 18px;
     color: #DC2626;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
 }
 
 .pointing-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    padding: 10px 18px;
     border: 1px solid #C4B5FD;
+    border-radius: 24px;
     color: #7C3AED;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
 }
 
 .gesture-badge:hover, .pointing-badge:hover {
@@ -109,10 +136,11 @@ body {
 
 .content {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 510px;
     gap: 25px;
     max-width: 1440px;
     margin: 0 auto;
+    padding: 90px 32px 32px;
     width: 100%;
 }
 
@@ -125,6 +153,7 @@ body {
 
 .video-page .video-player {
     width: 100%;
+    margin-bottom: 3px;
 }
 
 .video-page .video-title-large {
@@ -167,19 +196,6 @@ body {
     text-decoration: none !important;
     color: inherit;
     display: block;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-a:visited {
-    color: inherit;
-}
-
-a:hover {
-    text-decoration: none;
 }
 
 
@@ -270,24 +286,23 @@ a:hover {
 }
 
 .gesture-description {
-    width: 400px;
+    width: 100%;
+    max-width: 100%;
     flex-shrink: 0;
-}
-
-#gesture-controls, #cursor-controls {
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 20px;
 }
 
 #gesture-controls {
     background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
     border: 1px solid #FECACA;
+    border-radius: 16px;
+    padding: 16px;
 }
 
 #cursor-controls {
     background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
-    border: 1px solid #D8B4FD;
+    border: 1px solid #D8B4FE;
+    border-radius: 16px;
+    padding: 16px;
 }
 
 .gesture-heading {
@@ -474,17 +489,11 @@ a:hover {
     opacity: 0.85;
 }
 
-.badge-group {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
 .video-feedback {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     pointer-events: none;
 
     background: rgba(0, 0, 0, 0.65);
@@ -520,26 +529,49 @@ a:hover {
     gap: 10px;
 }
 
-.available-gestures p {
+.available-gestures .available-title {
     font-weight: bold;
     color: #DC2626;
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
 }
 
-.available-title {
+.available-gestures .gesture-hint {
+    color: #666;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.available-gestures-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.available-gestures-container .gesture-row:first-child {
+    grid-column: span 2;
     font-weight: 600;
-    margin-bottom: 8px;
-    color: #991B1B;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(220, 38, 38, 0.25);
 }
 
 .gesture-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    font-size: 14px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.gesture-row:hover {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .gesture-left {
@@ -625,12 +657,21 @@ a:hover {
     background: #f9f9f9;
     border-radius: 10px;
     border: 1px solid #e5e7eb;
-    width: 100%;
+    width: 98%;
 }
 
 /* Spacer vor rechter Gruppe */
 #mute {
     margin-left: auto;
+}
+
+.volume-grid.muted .volume-step {
+    background: #d1d5db;
+    box-shadow: none;
+}
+
+.volume-grid.muted .volume-step.active {
+    background: #d1d5db;
 }
 
 /* Volume & Fullscreen dicht zusammen */
