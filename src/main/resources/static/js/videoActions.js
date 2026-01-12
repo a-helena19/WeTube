@@ -19,6 +19,23 @@ export function initVideoActions(videoEl, feedbackEl) {
         }, 600);
     }
 
+    function showOnlyIconFeedback(icon) {
+        if (!feedbackEl) return;
+
+        feedbackEl.innerHTML = `<span>${icon}</span>`;
+        feedbackEl.classList.remove("hidden");
+        feedbackEl.classList.add("show");
+
+        if (feedbackTimeout) clearTimeout(feedbackTimeout);
+
+        feedbackTimeout = setTimeout(() => {
+            feedbackEl.classList.remove("show");
+            feedbackTimeout = setTimeout(() => {
+                feedbackEl.classList.add("hidden");
+            }, 200);
+        }, 600);
+    }
+
     const VOLUME_STEP = 0.1;
 
     return {
@@ -45,19 +62,22 @@ export function initVideoActions(videoEl, feedbackEl) {
         },
 
         showPlayFeedback() {
-            showFeedback("▶️", "Play");
+            showOnlyIconFeedback("▶");
         },
         showPauseFeedback() {
-            showFeedback("⏸", "Pause");
+            showOnlyIconFeedback("⏸");
         },
         showMuteFeedback() {
-            showFeedback("🔇", "Muted");
+            showOnlyIconFeedback("🔇");
         },
         showVolumeFeedback(percent) {
             showFeedback("🔊", `${percent}%`);
         },
         showSeekFeedback(delta) {
-            showFeedback(delta > 0 ? "⏩" : "⏪", `${Math.abs(delta)}s`);
+            showFeedback(delta > 0 ? "⏭" : "⏮", `${Math.abs(delta)}s`);
+        },
+        showRestartFeedback() {
+            showOnlyIconFeedback("⟲");
         }
     };
 }

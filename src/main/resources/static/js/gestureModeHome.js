@@ -15,14 +15,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const gestureEmojis = {
-        'Pointing_Up': '👆',
+        'Pointing_Up': '☝️',
         'Closed_Fist': '✊',
         'PINCH': '🤏',
+        'CURSOR_PINCH': '🤏',
+        'SCROLL_UP': '⬆️',
+        'SCROLL_DOWN': '⬇️'
+    };
+
+    const gestureDisplayNames = {
+        'Pointing_Up': 'Pointing Up',
+        'Closed_Fist': 'Fist',
+        'PINCH': 'Pinch',
+        'CURSOR_PINCH': 'Pinch click',
+        'SCROLL_UP': '2 Fingers Up',
+        'SCROLL_DOWN': '2 Fingers Down'
     };
 
     function displayRecognizedGesture(gestureName) {
         const emoji = gestureEmojis[gestureName] || '🤚';
-        gestureBadge.innerHTML = `<span>${emoji} ${gestureName}</span>`;
+        const displayName = gestureDisplayNames[gestureName] || gestureName;
+        gestureBadge.innerHTML = `<span>${emoji} ${displayName}</span>`;
         gestureBadge.style.display = "block";
 
         // ⏱️ Reset Timer

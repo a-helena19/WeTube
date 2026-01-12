@@ -71,7 +71,12 @@ let openPalmStartTime = null;
 let openPalmTriggered = false;
 
 let pinchActive = false;
+let pinchRestartStartTime = null;
+let pinchRestartTriggered = false;
+const PINCH_RESTART_HOLD_TIME = 600;
 
+// Flag to prevent event loop
+let isInternalChange = false;
 
 export function setCursorModeActive(active) {
     cursorModeActive = active;
@@ -81,10 +86,25 @@ export function setCursorModeActive(active) {
         cursor.style.display = active ? "block" : "none";
     }
 
+    isInternalChange = true;
     window.dispatchEvent(new CustomEvent('cursorModeChanged', {
         detail: { active }
     }));
+    isInternalChange = false;
 }
+
+// Listen for external cursor mode changes (from UI clicks)
+window.addEventListener('cursorModeChanged', (e) => {
+    if (isInternalChange) return;
+
+    const active = e.detail.active;
+    cursorModeActive = active;
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) {
+        cursor.style.display = active ? "block" : "none";
+    }
+});
 
 async function initGestureEngine() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -218,15 +238,27 @@ function handleILYNavigationOnce(direction, now) {
     }
 }
 
-function handlePinchRestart(lm) {
+function handlePinchRestart(lm, now) {
     if (isPinch(lm)) {
-        if (!pinchActive) {
+        dispatchGestureFeedback("PINCH");
+
+        if (!pinchRestartStartTime) {
+            pinchRestartStartTime = now;
+            pinchRestartTriggered = false;
+            return;
+        }
+
+        if (pinchRestartTriggered) return;
+
+        const heldTime = now - pinchRestartStartTime;
+
+        if (heldTime >= PINCH_RESTART_HOLD_TIME) {
             emitGesture("RESTART_VIDEO");
-            dispatchGestureFeedback("PINCH");
-            pinchActive = true;
+            pinchRestartTriggered = true;
         }
     } else {
-        pinchActive = false;
+        pinchRestartStartTime = null;
+        pinchRestartTriggered = false;
     }
 }
 
@@ -371,6 +403,7 @@ function handleElementClick(x, y) {
 }
 
 let scrollVelocity = 0;
+let lastScrollDirection = null;
 
 function handleTwoFingerScroll(lm) {
     const y = lm[12].y;
@@ -386,6 +419,13 @@ function handleTwoFingerScroll(lm) {
 
     if (Math.abs(delta) < 0.0015) return;
     const scrollAmount = -delta * 900;
+
+    // Dispatch feedback for scroll direction
+    const scrollDirection = delta < 0 ? "SCROLL_UP" : "SCROLL_DOWN";
+    if (scrollDirection !== lastScrollDirection) {
+        dispatchGestureFeedback(scrollDirection);
+        lastScrollDirection = scrollDirection;
+    }
 
     window.scrollBy({
         top: scrollAmount,
@@ -409,6 +449,8 @@ function processCursorMode(lm) {
         const heldTime = performance.now() - pinchStartTime;
 
         if (!pinchTriggered && heldTime >= PINCH_HOLD_TIME) {
+            dispatchGestureFeedback("CURSOR_PINCH");
+
             const handledVideo = handleVideoInteraction(pos.x, pos.y);
 
             if (!handledVideo) {
@@ -429,6 +471,7 @@ function processCursorMode(lm) {
         handleTwoFingerScroll(lm);
     } else {
         twoFingerScrollActive = false;
+        lastScrollDirection = null;
     }
 }
 
@@ -501,7 +544,7 @@ function loop() {
 
     const lm = result.landmarks[0];
 
-    handlePinchRestart(lm);
+    handlePinchRestart(lm, now);
 
     if (isShaka(lm)) {
         handleGestureHold("SHAKA", now);

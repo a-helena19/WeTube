@@ -22,4 +22,9 @@ public class HomeController {
         modelAndView.addObject("videos", videos);
         return modelAndView;
     }
+
+    @GetMapping("/")
+    public String redirectToHomePage() {
+        return "redirect:/home";
+    }
 }

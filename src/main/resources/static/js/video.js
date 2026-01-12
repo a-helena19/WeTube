@@ -191,6 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         window.uiState.cursorModeActive = true;
+
+        window.dispatchEvent(new CustomEvent('cursorModeChanged', {
+            detail: { active: true }
+        }));
     }
 
     function switchToGestureMode() {
@@ -202,15 +206,32 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = '<span>Gesture Mode</span>';
         }
         window.uiState.cursorModeActive = false;
+
+        window.dispatchEvent(new CustomEvent('cursorModeChanged', {
+            detail: { active: false }
+        }));
     }
 
     window.addEventListener("cursorModeChanged", (e) => {
         const active = e.detail.active;
 
+        // Update UI state
+        window.uiState.cursorModeActive = active;
+
         if (active) {
-            switchToPointingMode();
+            gestureControls.classList.add("hidden");
+            cursorControls.classList.remove("hidden");
+            if (modeBadge) {
+                modeBadge.className = "pointing-badge";
+                modeBadge.innerHTML = '<span>Cursor Mode</span>';
+            }
         } else {
-            switchToGestureMode();
+            cursorControls.classList.add("hidden");
+            gestureControls.classList.remove("hidden");
+            if (modeBadge) {
+                modeBadge.className = "gesture-badge";
+                modeBadge.innerHTML = '<span>Gesture Mode</span>';
+            }
         }
     });
 
@@ -244,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRestart.onclick = () => {
         videoEl.currentTime = 0;
         videoEl.play();
-        videoActions.showSeekFeedback(0);
+        videoActions.showRestartFeedback();
     };
 
     btnPlay.onclick = () => videoActions.playPause();

@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const gestureEmojis = {
-        'Pointing_Up': '👆',
+        'Pointing_Up': '☝️',
         'Closed_Fist': '✊',
         'Thumb_Up': '👍',
         'Thumb_Down': '👎',
@@ -32,14 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
         'SHAKA': '🤙',
         'ILY_RIGHT_NEXT': '🤟',
         'ILY_LEFT_BACK': '🤟',
-        'FOUR_FINGER_RIGHT': '🖐️',
+        'FOUR_FINGER_RIGHT': '🤚',
         'FOUR_FINGER_LEFT': '🖐️',
-        'PINCH': '🤏'
+        'PINCH': '🤏',
+        'CURSOR_PINCH': '🤏',
+        'SCROLL_UP': '⬆️',
+        'SCROLL_DOWN': '⬇️'
+    };
+
+    const gestureDisplayNames = {
+        'Pointing_Up': 'Pointing Up',
+        'Closed_Fist': 'Fist',
+        'Thumb_Up': 'Thumb Up',
+        'Thumb_Down': 'Thumb Down',
+        'Victory': 'Victory',
+        'Open_Palm': 'Open Palm',
+        'SHAKA': 'Shaka',
+        'ILY_RIGHT_NEXT': 'ILY R → Next',
+        'ILY_LEFT_BACK': 'ILY L → Back',
+        'FOUR_FINGER_RIGHT': '4 Fingers R',
+        'FOUR_FINGER_LEFT': '4 Fingers L',
+        'PINCH': 'Pinch restart',
+        'CURSOR_PINCH': 'Pinch click',
+        'SCROLL_UP': '2 Fingers Up',
+        'SCROLL_DOWN': '2 Fingers Down'
     };
 
     function displayRecognizedGesture(gestureName) {
         const emoji = gestureEmojis[gestureName] || '🤚';
-        gestureBadge.innerHTML = `<span>${emoji} ${gestureName}</span>`;
+        const displayName = gestureDisplayNames[gestureName] || gestureName;
+        gestureBadge.innerHTML = `<span>${emoji} ${displayName}</span>`;
         gestureBadge.style.display = "block";
 
         // ⏱️ Reset Timer
@@ -218,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         video.currentTime = 0;
         video.play();
+        videoActions.showRestartFeedback();
     }
 
     function toggleFakeFullscreenOpenPalm() {

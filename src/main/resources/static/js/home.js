@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.className = "pointing-badge";
             modeBadge.innerHTML = '<span>Cursor Mode</span>';
         }
+
+        window.dispatchEvent(new CustomEvent('cursorModeChanged', {
+            detail: { active: true }
+        }));
     }
 
     function switchToGestureMode() {
@@ -26,15 +30,29 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.className = "gesture-badge";
             modeBadge.innerHTML = '<span>Gesture Mode</span>';
         }
+
+        window.dispatchEvent(new CustomEvent('cursorModeChanged', {
+            detail: { active: false }
+        }));
     }
 
     window.addEventListener("cursorModeChanged", (e) => {
         const active = e.detail.active;
 
         if (active) {
-            switchToPointingMode();
+            gestureControls.classList.add("hidden");
+            cursorControls.classList.remove("hidden");
+            if (modeBadge) {
+                modeBadge.className = "pointing-badge";
+                modeBadge.innerHTML = '<span>Cursor Mode</span>';
+            }
         } else {
-            switchToGestureMode();
+            cursorControls.classList.add("hidden");
+            gestureControls.classList.remove("hidden");
+            if (modeBadge) {
+                modeBadge.className = "gesture-badge";
+                modeBadge.innerHTML = '<span>Gesture Mode</span>';
+            }
         }
     });
 

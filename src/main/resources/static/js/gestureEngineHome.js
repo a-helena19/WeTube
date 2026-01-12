@@ -29,9 +29,13 @@ const CURSOR_TRACKING_ZONE = {
 };
 let twoFingerScrollActive = false;
 let lastScrollY = 0;
+let lastScrollDirection = null;
 let pinchStartTime = null;
 let pinchTriggered = false;
 const PINCH_HOLD_TIME = 500;
+
+// Flag to prevent event loop
+let isInternalChange = false;
 
 export function setCursorModeActive(active) {
     cursorModeActive = active;
@@ -41,10 +45,25 @@ export function setCursorModeActive(active) {
         cursor.style.display = active ? "block" : "none";
     }
 
+    isInternalChange = true;
     window.dispatchEvent(new CustomEvent('cursorModeChanged', {
         detail: { active }
     }));
+    isInternalChange = false;
 }
+
+// Listen for external cursor mode changes (from UI clicks)
+window.addEventListener('cursorModeChanged', (e) => {
+    if (isInternalChange) return;
+
+    const active = e.detail.active;
+    cursorModeActive = active;
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) {
+        cursor.style.display = active ? "block" : "none";
+    }
+});
 
 
 async function initGestureEngineHome() {
@@ -195,6 +214,13 @@ function handleTwoFingerScroll(lm) {
     if (Math.abs(delta) < 0.0015) return;
     const scrollAmount = -delta * 800;
 
+    // Dispatch feedback for scroll direction
+    const scrollDirection = delta < 0 ? "SCROLL_UP" : "SCROLL_DOWN";
+    if (scrollDirection !== lastScrollDirection) {
+        dispatchGestureFeedback(scrollDirection);
+        lastScrollDirection = scrollDirection;
+    }
+
     window.scrollBy({
         top: scrollAmount,
         behavior: "auto"
@@ -216,6 +242,8 @@ function processCursorMode(lm) {
         const heldTime = performance.now() - pinchStartTime;
 
         if (!pinchTriggered && heldTime >= PINCH_HOLD_TIME) {
+            dispatchGestureFeedback("CURSOR_PINCH");
+
             const handledVideo = handleVideoInteraction(pos.x, pos.y);
 
             if (!handledVideo) {
@@ -236,6 +264,7 @@ function processCursorMode(lm) {
         handleTwoFingerScroll(lm);
     } else {
         twoFingerScrollActive = false;
+        lastScrollDirection = null;
     }
 }
 
