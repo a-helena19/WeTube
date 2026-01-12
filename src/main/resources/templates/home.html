@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeTube UI</title>
+    <link rel="icon" type="image/png" href="/images/WeTubeLogo-No-Text.png">
+    <title>WeTube</title>
     <link rel="stylesheet" href="/css/home.css">
     <script src="/js/home.js" defer></script>
 </head>
@@ -38,8 +39,11 @@
         <section class="video-grid">
             <a th:href="@{/video(id=${video.id})}" class="video-card-link" th:each="video : ${videos}">
                 <div class="video-card">
-                    <img th:src="${video.thumbnailUrl != null ? video.thumbnailUrl : 'https://placehold.co/329x185'}"
-                         alt="Thumbnail" class="thumbnail">
+                    <div class="thumbnail-wrapper">
+                        <img th:src="${video.thumbnailUrl != null ? video.thumbnailUrl : 'https://placehold.co/329x185'}"
+                             alt="Thumbnail" class="thumbnail">
+                        <span class="duration-badge" th:text="${@timeUtil.formatDuration(video.durationSeconds)}">0:00</span>
+                    </div>
                     <div class="video-info">
                         <h3 class="video-title" th:text="${video.title}">Video Title</h3>
                         <p class="video-details">
@@ -65,11 +69,7 @@
 
                     <div class="available-gestures-container">
                         <div class="gesture-row">
-                        <span class="gesture-left">
-                            <div style="width: 16.8px; height: 16.8px; display: inline-block;">
-                                <img src="/images/point-up.png" alt="👆" style="width: 100%; height: 100%; object-fit: cover;" >
-                            </div>
-                                Pointing Up</span>
+                            <span class="gesture-left">☝️ Pointing Up</span>
                             <span class="gesture-right">Activate Cursor Mode</span>
                         </div>
                     </div>
@@ -80,12 +80,42 @@
             <div id="cursor-controls" class="hidden">
                 <h2 class="cursor-heading">Pointing Mode</h2>
                 <p class="cursor-text">Control the UI with your index finger</p>
-                <ul class="cursor-steps">
-                    <li><strong>Point your finger:</strong> Extend your index finger and point at the screen.</li>
-                    <li><strong>Move to control cursor:</strong> The red cursor follows your finger position.</li>
-                    <li><strong>Pinch to select:</strong> Pinch for hand-to-click.</li>
-                    <li><strong>Make fist to exit:</strong> Close your hand into a fist to return to normal mode.</li>
-                </ul>
+                <div class="available-gestures-container cursor-gestures">
+                    <div class="gesture-row full">
+                        <span class="gesture-left">☝️ Move Index Finger</span>
+                        <span class="gesture-right">Move Cursor</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">
+                            <div style="width: 16.8px; height: 16.8px; display: inline-block;">
+                                <img src="/images/2-finger.png" alt="☝️" style="width: 100%; height: 100%; object-fit: cover;" >
+                            </div>
+                            2 Fingers Swip ⬆
+                        </span>
+                        <span class="gesture-right">Scroll Up</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">
+                            <div style="width: 16.8px; height: 16.8px; display: inline-block;">
+                                <img src="/images/2-finger.png" alt="☝️" style="width: 100%; height: 100%; object-fit: cover;" >
+                            </div>
+                            2 Fingers Swip ⬇
+                        </span>
+                        <span class="gesture-right">Scroll Down</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">🤏 Pinch</span>
+                        <span class="gesture-right">Click / Select</span>
+                    </div>
+
+                    <div class="gesture-row">
+                        <span class="gesture-left">✊ Fist</span>
+                        <span class="gesture-right">Exit Cursor Mode</span>
+                    </div>
+                </div>
                 <button class="end-cursor-mode" id="end-cursor-mode">End Cursor Mode</button>
                 <div class="cursor-indicator">
                     <div class="red-dot"></div>

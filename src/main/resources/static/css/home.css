@@ -179,9 +179,27 @@ body {
     display: block;
 }
 
+.thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .thumbnail {
     width: 100%;
     border-radius: 8px 8px 0 0;
+    display: block;
+}
+
+.duration-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .video-info {
@@ -415,4 +433,32 @@ a:hover {
 .gesture-right {
     text-align: right;
     color: #374151;
+}
+
+.cursor-gestures {
+    margin-top: 16px;
+}
+
+#cursor-controls .gesture-row {
+    background: rgba(245, 243, 255, 0.8);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+}
+
+#cursor-controls .gesture-row:hover {
+    background: rgba(237, 233, 254, 0.95);
+}
+
+#cursor-controls .gesture-left {
+    font-weight: 500;
+    color: #4c1d95;
+}
+
+#cursor-controls .gesture-right {
+    color: #6d28d9;
+}
+
+.cursor-gestures .gesture-row.full {
+    grid-column: span 2;
+    font-weight: 600;
+    background: rgba(237, 233, 254, 0.9);
 }

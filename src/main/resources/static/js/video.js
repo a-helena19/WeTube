@@ -41,8 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
 
-    const backBtn = document.querySelector(".video-back");
-    const nextBtn = document.querySelector(".video-next");
+    const backBtnControl = document.querySelector(".video-back");
+    const nextBtnControl = document.querySelector(".video-next");
+
+    const nextBtn = document.getElementById("video-next-btn");
+    const backBtn = document.getElementById("video-back-btn");
 
     const btnRestart = document.getElementById("restart");
     const btnRewind = document.getElementById("rewind");
@@ -91,6 +94,24 @@ document.addEventListener("DOMContentLoaded", () => {
             `${formatTime(videoEl.currentTime)} / ${formatTime(videoEl.duration)}`;
     });
 
+
+    if (backBtnControl) {
+        backBtnControl.addEventListener("click", () => {
+            window.history.back();
+        });
+    }
+
+    if (nextBtnControl) {
+        nextBtnControl.addEventListener("click", () => {
+            const nextVideoLink = document.querySelector(
+                ".video-grid .video-card-link"
+            );
+
+            if (nextVideoLink) {
+                window.location.href = nextVideoLink.href;
+            }
+        });
+    }
 
     if (backBtn) {
         backBtn.addEventListener("click", () => {

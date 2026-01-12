@@ -198,6 +198,10 @@ a:hover {
     display: block;
 }
 
+.video-page .thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+}
 
 .video-page .thumbnail {
     width: 100%;
@@ -205,6 +209,18 @@ a:hover {
     object-fit: cover;
     display: block;
     background-color: #000;
+}
+
+.video-page .duration-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 
@@ -264,7 +280,39 @@ a:hover {
 .video-page .video-details-large {
     font-size: 14px;
     color: #606060;
-    margin: 0 0 20px 0;
+    margin: 0 0 12px 0;
+}
+
+/* Video Description Box */
+.video-description-box {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.description-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.description-duration {
+    background: #0f0f0f;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.description-text {
+    font-size: 14px;
+    color: #0f0f0f;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-wrap;
 }
 
 
@@ -878,4 +926,32 @@ body.fake-fullscreen-active {
 /* Hover – größer für Cursor */
 .progress-container:hover {
     height: 10px;
+}
+
+.cursor-gestures {
+    margin-top: 16px;
+}
+
+#cursor-controls .gesture-row {
+    background: rgba(245, 243, 255, 0.8);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+}
+
+#cursor-controls .gesture-row:hover {
+    background: rgba(237, 233, 254, 0.95);
+}
+
+#cursor-controls .gesture-left {
+    font-weight: 500;
+    color: #4c1d95;
+}
+
+#cursor-controls .gesture-right {
+    color: #6d28d9;
+}
+
+.cursor-gestures .gesture-row.full {
+    grid-column: span 2;
+    font-weight: 600;
+    background: rgba(237, 233, 254, 0.9);
 }
