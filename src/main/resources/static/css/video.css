@@ -838,7 +838,7 @@ body.fake-fullscreen-active {
 
 .video-player-container.fake-fullscreen .time-display {
     position: absolute;
-    bottom: 70px;
+    bottom: 110px;
     left: 16px;
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
@@ -851,7 +851,7 @@ body.fake-fullscreen-active {
 
 .video-player-container.fake-fullscreen .progress-container {
     position: absolute;
-    bottom: 56px;
+    bottom: 68px;
     left: 16px;
     right: 16px;
     margin: 0;
@@ -869,7 +869,9 @@ body.fake-fullscreen-active {
     left: 0;
     right: 0;
     width: 99%;
-    margin: 0;
+    margin: 0 0 10px;
+    padding: 12px 8px;
+    gap: 18px;
     background: rgba(20, 20, 20, 0.95);
     border-radius: 0;
     flex-shrink: 0;
@@ -880,8 +882,12 @@ body.fake-fullscreen-active {
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.3);
     color: #fff;
+    padding: 8px 13px;
+    font-size: 14px;
+    border-radius: 12px;
+    min-width: 35px;
+    min-height: 20px;
 }
-
 .video-player-container.fake-fullscreen .controls button:hover {
     background: rgba(255, 255, 255, 0.25);
     border-color: rgba(255, 255, 255, 0.5);

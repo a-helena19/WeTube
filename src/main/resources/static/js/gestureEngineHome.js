@@ -12,10 +12,11 @@ let gestureRecognizer = null;
 let cameraStream = null;
 let isRunning = false;
 let cameraEnabled = true;
+window.cursorModeActive = false;
 
 const GESTURE_HOLD_TIME = {
-    Pointing_Up: 400,
-    Closed_Fist: 400,
+    Pointing_Up: 800,
+    Closed_Fist: 800,
     PINCH: 400
 };
 
@@ -31,34 +32,34 @@ const CURSOR_TRACKING_ZONE = {
     yMin: 0.15, yMax: 0.85
 };
 let twoFingerScrollActive = false;
-let lastScrollY = 0;
-let lastScrollDirection = null;
 let pinchStartTime = null;
 let pinchTriggered = false;
-const PINCH_HOLD_TIME = 400;
+const PINCH_HOLD_TIME = 700;
+let lastScrollFeedbackTime = 0;
+const SCROLL_FEEDBACK_INTERVAL = 200;
 
 let isInternalChange = false;
 
-export function setCursorModeActive(active) {
-    cursorModeActive = active;
+window.setCursorModeActive = function(active) {
+    console.log("CursorMode set to:", active);
+    window.cursorModeActive = active;
 
     const cursor = document.getElementById("virtual-cursor");
-    if (cursor) {
-        cursor.style.display = active ? "block" : "none";
-    }
+    if (cursor) cursor.style.display = active ? "block" : "none";
 
     isInternalChange = true;
     window.dispatchEvent(new CustomEvent('cursorModeChanged', {
         detail: { active }
     }));
     isInternalChange = false;
-}
+};
+
 
 window.addEventListener('cursorModeChanged', (e) => {
     if (isInternalChange) return;
 
     const active = e.detail.active;
-    cursorModeActive = active;
+    window.cursorModeActive = active;
 
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) {
@@ -110,7 +111,7 @@ async function stopCamera() {
     const cursor = document.getElementById("virtual-cursor");
     if (cursor) cursor.style.display = "none";
 
-    cursorModeActive = false;
+    window.cursorModeActive = false;
 }
 
 async function startCamera() {
@@ -153,7 +154,6 @@ function resetGestureHold() {
     gestureStartTime = null;
     gestureTriggered = false;
 }
-
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 400;
 
@@ -165,29 +165,67 @@ function handleGestureHold(gestureName, now) {
     }
 
     if (!gestureTriggered && now - gestureStartTime >= holdTime) {
+
+        if (gestureName === "Pointing_Up") {
+            setCursorModeActive(true);
+        }
+
+        if (gestureName === "Closed_Fist") {
+            setCursorModeActive(false);
+        }
+
         emitGesture(gestureName);
         gestureTriggered = true;
     }
 }
 
+
+let pinchState = false;
 function isPinch(lm) {
     const dx = lm[4].x - lm[8].x;
     const dy = lm[4].y - lm[8].y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < 0.055;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    const PINCH_ON = 0.04;
+    const PINCH_OFF = 0.05;
+
+    if (!pinchState && dist < PINCH_ON) pinchState = true;
+    if (pinchState && dist > PINCH_OFF) pinchState = false;
+
+    return pinchState;
 }
+
+function getSafeLandmarks(result) {
+    const lm = result.landmarks?.[0];
+    return lm && lm.length === 21 ? lm : null;
+}
+
 
 function mapHandToScreen(handX, handY) {
     const zone = CURSOR_TRACKING_ZONE;
+
     const normalizedX = (handX - zone.xMin) / (zone.xMax - zone.xMin);
     const normalizedY = (handY - zone.yMin) / (zone.yMax - zone.yMin);
 
     const clampedX = Math.max(0, Math.min(1, normalizedX));
     const clampedY = Math.max(0, Math.min(1, normalizedY));
-    const mirroredX = 1 - clampedX;
 
-    cursorX = cursorX + (mirroredX - cursorX) * CURSOR_SMOOTHING;
-    cursorY = cursorY + (clampedY - cursorY) * CURSOR_SMOOTHING;
+    const targetX = (1 - clampedX);
+    const targetY = clampedY;
+
+    const dx = targetX - cursorX;
+    const dy = targetY - cursorY;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    const responsiveness = Math.min(1, distance * 10);
+    const smoothing = 0.18 + responsiveness * 0.55;
+
+    cursorX += dx * smoothing;
+    cursorY += dy * smoothing;
+
+    if (Math.abs(dx) < 0.0015) cursorX = targetX;
+    if (Math.abs(dy) < 0.0015) cursorY = targetY;
 
     return {
         x: cursorX * window.innerWidth,
@@ -220,6 +258,8 @@ function handleVideoInteraction(x, y) {
 }
 
 function isTwoFingersUp(lm) {
+    if (!lm || lm.length < 21) return false;
+
     const indexUp = lm[8].y < lm[6].y;
     const middleUp = lm[12].y < lm[10].y;
     const ringDown = lm[16].y > lm[14].y;
@@ -227,24 +267,55 @@ function isTwoFingersUp(lm) {
     return indexUp && middleUp && ringDown && pinkyDown;
 }
 
+
 function handleElementClick(x, y) {
-    const el = document.elementFromPoint(x, y);
-    if (!el) return;
+    const radius = 12;
 
-    const clickable = el.closest(
-        "button, a, .video-card, .video-card-link, [role='button']"
-    );
+    const points = [
+        [0, 0],
+        [-radius, 0],
+        [radius, 0],
+        [0, -radius],
+        [0, radius],
+        [radius, radius],
+        [-radius, -radius],
+        [radius, -radius],
+        [-radius, radius]
+    ];
 
-    if (clickable) {
-        clickable.click();
+    for (const [dx, dy] of points) {
+        const el = document.elementFromPoint(x + dx, y + dy);
+        if (!el) continue;
+
+        const clickable = el.closest(
+            "button, a, .video-card, .video-card-link, [role='button']"
+        );
+
+        if (clickable) {
+            clickable.click();
+            return;
+        }
     }
 }
 
+function isPointingGesture(lm) {
+    if (!lm) return false;
+
+    const indexUp  = lm[8].y  < lm[6].y;
+    const middleDown = lm[12].y > lm[10].y;
+    const ringDown   = lm[16].y > lm[14].y;
+    const pinkyDown  = lm[20].y > lm[18].y;
+
+    return indexUp && middleDown && ringDown && pinkyDown;
+}
+
+let scrollVelocity = 0;
+let lastScrollY = null;
 function handleTwoFingerScroll(lm) {
     const y = lm[12].y;
+    const now = performance.now();
 
-    if (!twoFingerScrollActive) {
-        twoFingerScrollActive = true;
+    if (lastScrollY === null) {
         lastScrollY = y;
         return;
     }
@@ -252,17 +323,37 @@ function handleTwoFingerScroll(lm) {
     const delta = y - lastScrollY;
     lastScrollY = y;
 
-    if (Math.abs(delta) < 0.0015) return;
-    const scrollAmount = -delta * 800;
+    if (Math.abs(delta) < 0.0007) return;
 
-    const scrollDirection = delta < 0 ? "SCROLL_UP" : "SCROLL_DOWN";
-    if (scrollDirection !== lastScrollDirection) {
-        dispatchGestureFeedback(scrollDirection);
-        lastScrollDirection = scrollDirection;
+    scrollVelocity += -delta * 500;
+
+    scrollVelocity = Math.max(-30, Math.min(30, scrollVelocity));
+
+
+    twoFingerScrollActive = true;
+
+    if (now - lastScrollFeedbackTime > SCROLL_FEEDBACK_INTERVAL) {
+        if (delta > 0) {
+            dispatchGestureFeedback("SCROLL_DOWN");
+        } else {
+            dispatchGestureFeedback("SCROLL_UP");
+        }
+        lastScrollFeedbackTime = now;
+    }
+}
+
+function updateSmoothScroll() {
+    if (!twoFingerScrollActive) return;
+
+    scrollVelocity *= 0.88;
+
+    if (Math.abs(scrollVelocity) < 0.2) {
+        scrollVelocity = 0;
+        return;
     }
 
     window.scrollBy({
-        top: scrollAmount,
+        top: scrollVelocity,
         behavior: "auto"
     });
 }
@@ -270,6 +361,11 @@ function handleTwoFingerScroll(lm) {
 function processCursorMode(lm) {
     const pos = mapHandToScreen(lm[8].x, lm[8].y);
     updateVirtualCursor(pos.x, pos.y);
+
+    if (twoFingerScrollActive) {
+        pinchStartTime = null;
+        pinchTriggered = false;
+    }
 
     const pinching = isPinch(lm);
 
@@ -303,7 +399,7 @@ function processCursorMode(lm) {
         handleTwoFingerScroll(lm);
     } else {
         twoFingerScrollActive = false;
-        lastScrollDirection = null;
+        lastScrollY = null;
     }
 }
 
@@ -314,6 +410,7 @@ const FEEDBACK_GESTURES = new Set([
 
 function loop() {
     if (!isRunning || !cameraEnabled) return;
+    updateSmoothScroll();
 
     const now = performance.now();
 
@@ -327,17 +424,10 @@ function loop() {
         dispatchGestureFeedback(topGesture.categoryName);
     }
 
-    if (topGesture?.categoryName === "Pointing_Up" && topGesture.score > 0.7) {
-        setCursorModeActive(true);
-    }
-
-    if (topGesture?.categoryName === "Closed_Fist" && topGesture.score > 0.7) {
-        setCursorModeActive(false);
-    }
 
     const result = handLandmarker.detectForVideo(video, now);
 
-    if (cursorModeActive && result.landmarks?.length) {
+    if (window.cursorModeActive && result.landmarks?.length) {
         processCursorMode(result.landmarks[0]);
         requestAnimationFrame(loop);
         return;

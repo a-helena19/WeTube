@@ -7,5 +7,12 @@ window.emitGesture = function (gestureName) {
             }
         })
     );
-};
 
+    if (gestureName === "Pointing_Up") {
+        setCursorModeActive(true);
+    }
+
+    if (gestureName === "Closed_Fist") {
+        setCursorModeActive(false);
+    }
+};
