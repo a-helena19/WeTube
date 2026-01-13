@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let gestureClearTimeout = null;
 
-
     const gestureEmojis = {
         'Pointing_Up': '☝️',
         'Closed_Fist': '✊',
@@ -48,11 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
         'Victory': 'Victory',
         'Open_Palm': 'Open Palm',
         'SHAKA': 'Shaka',
-        'ILY_RIGHT_NEXT': 'ILY R → Next',
-        'ILY_LEFT_BACK': 'ILY L → Back',
+        'ILY_RIGHT_NEXT': 'ILY R',
+        'ILY_LEFT_BACK': 'ILY L',
         'FOUR_FINGER_RIGHT': '4 Fingers R',
         'FOUR_FINGER_LEFT': '4 Fingers L',
-        'PINCH': 'Pinch restart',
+        'PINCH': 'Pinch',
         'CURSOR_PINCH': 'Pinch click',
         'SCROLL_UP': '2 Fingers Up',
         'SCROLL_DOWN': '2 Fingers Down'
@@ -64,16 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
         gestureBadge.innerHTML = `<span>${emoji} ${displayName}</span>`;
         gestureBadge.style.display = "block";
 
-        // ⏱️ Reset Timer
         if (gestureClearTimeout) {
             clearTimeout(gestureClearTimeout);
         }
 
         gestureClearTimeout = setTimeout(() => {
             clearGestureBadge();
-        }, 400); // 300–500ms fühlt sich gut an
+        }, 400);
     }
-
 
     function clearGestureBadge() {
         gestureBadge.innerHTML = '';
@@ -83,10 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('gestureDetected', (event) => {
         displayRecognizedGesture(event.detail.gestureName);
     });
-
-    // ===========================
-    // UI SWITCH FUNCTIONS
-    // ===========================
 
     function activateCursorMode() {
         if (window.uiState.cursorModeActive) return;
@@ -102,13 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.innerHTML = "<span>Cursor Mode</span>";
         }
 
-
         window.dispatchEvent(
             new CustomEvent("cursorModeChanged", {
                 detail: { active: true }
             })
         );
-
 
     }
 
@@ -125,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.className = "gesture-badge";
             modeBadge.innerHTML = "<span>Gesture Mode</span>";
         }
-
 
         window.dispatchEvent(
             new CustomEvent("cursorModeChanged", {
@@ -155,10 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // ===========================
-    // GESTURE HANDLING
-    // ===========================
-
     function handleGesture(gesture) {
         if (!gesture) return;
         if (gestureLock && gesture !== "Closed_Fist") return;
@@ -178,10 +164,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             case "Thumb_Up":
                 videoActions.volumeUp();
+                showVideoFeedback("🔊", `${Math.round(videoEl.volume * 100)}%`);
                 break;
 
             case "Thumb_Down":
                 videoActions.volumeDown();
+                showVideoFeedback("🔉", `${Math.round(videoEl.volume * 100)}%`);
                 break;
 
             case "SHAKA":
@@ -212,13 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 toggleFakeFullscreenOpenPalm();
                 break;
 
-
         }
     }
-
-    // ===========================
-    // EVENT LISTENER
-    // ===========================
 
     window.addEventListener("gesture", (e) => {
         handleGesture(e.detail.name);
@@ -260,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.body.classList.toggle("fake-fullscreen-active", state.fakeFullscreenActive);
 
-        // Fullscreen Gesture Badge erstellen/entfernen
         manageFullscreenGestureBadge(state.fakeFullscreenActive);
 
         showFullscreenHint(feedback);
@@ -279,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.appendChild(fullscreenBadge);
             }
 
-            // Observer für das Original-Badge
             const observer = new MutationObserver(() => {
                 if (originalBadge && originalBadge.style.display !== "none" && originalBadge.innerHTML) {
                     fullscreenBadge.innerHTML = originalBadge.innerHTML;

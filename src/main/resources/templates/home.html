@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="/images/WeTubeLogo-No-Text.png">
     <title>WeTube</title>
     <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/searchAutocomplete.js" defer></script>
     <script src="/js/home.js" defer></script>
 </head>
 <body>
@@ -17,17 +18,15 @@
             </a>
         </div>
         <div class="search-bar">
-            <input type="text" class="search-input" placeholder="Search">
+            <input type="text" class="search-input" placeholder="Search" th:value="${searchQuery}">
             <button class="search-button">
-                <div class="search-icon"></div>
+                <div class="search-icon" role="button"></div>
             </button>
         </div>
         <div class="badge-group">
             <div class="gesture-badge" id="gesture-badge" style="display: none"></div>
 
-            <div class="gesture-badge" id="camera-lock">
-                <span>🔓🔒 Disable Camera & Gestures</span>
-            </div>
+            <div class="gesture-badge" id="camera-lock" role="button"></div>
 
             <div class="gesture-badge" id="mode-badge" role="button">
                 <span>Gesture Mode</span>
@@ -45,14 +44,19 @@
                         <span class="duration-badge" th:text="${@timeUtil.formatDuration(video.durationSeconds)}">0:00</span>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title" th:text="${video.title}">Video Title</h3>
-                        <p class="video-details">
-                            <span th:text="${video.creatorName != null ? video.creatorName : 'Unknown'}">Creator</span>
-                            <span> • </span>
-                            <span th:text="${@timeUtil.formatViewCount(video.viewCount)} + ' views'">0 views</span>
-                            <span> • </span>
-                            <span th:text="${@timeUtil.getTimeAgo(video.createdAt)}">Unknown</span>
-                        </p>
+                        <div class="video-info-row">
+                            <img th:src="${video.creatorAvatarUrl != null ? video.creatorAvatarUrl : '/images/default-avatar.svg'}"
+                                 alt="Creator Avatar" class="creator-avatar">
+                            <div class="video-meta">
+                                <h3 class="video-title" th:text="${video.title}">Video Title</h3>
+                                <p class="creator-name" th:text="${video.creatorName != null ? video.creatorName : 'Unknown'}">Creator</p>
+                                <p class="video-details">
+                                    <span th:text="${@timeUtil.formatViewCount(video.viewCount)} + ' views'">0 views</span>
+                                    <span> • </span>
+                                    <span th:text="${@timeUtil.getTimeAgo(video.createdAt)}">Unknown</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </a>

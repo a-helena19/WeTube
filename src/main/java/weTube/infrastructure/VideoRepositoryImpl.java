@@ -54,4 +54,15 @@ public class VideoRepositoryImpl implements VideoRepository {
         }
         return videos;
     }
+
+    @Override
+    public List<Video> searchByQuery(String query) {
+        List<VideoEntity> entities = jpaRepository.searchByQuery(query);
+        List<Video> videos = new ArrayList<>();
+        for (VideoEntity entity : entities) {
+            Video video = VideoMapper.toDomain(entity);
+            videos.add(video);
+        }
+        return videos;
+    }
 }

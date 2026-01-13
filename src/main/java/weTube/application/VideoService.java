@@ -37,6 +37,31 @@ public class VideoService {
         return videoDTOs;
     }
 
+    public List<VideoDTO> searchByQuery(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return findAllRandom();
+        }
+        List<Video> videos = videoRepository.searchByQuery(query.trim());
+        List<VideoDTO> videoDTOs = new ArrayList<>();
+
+        for (Video video : videos) {
+            videoDTOs.add(toDTO(video));
+        }
+        return videoDTOs;
+    }
+
+    public List<String> getSearchSuggestions(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Video> videos = videoRepository.searchByQuery(query.trim());
+        return videos.stream()
+                .map(Video::getTitle)
+                .distinct()
+                .limit(8)
+                .collect(Collectors.toList());
+    }
+
     public Optional<VideoDTO> findById(Long id) {
         Optional<Video> videoOptional = videoRepository.findById(id);
 

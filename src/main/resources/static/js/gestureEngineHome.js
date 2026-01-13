@@ -9,11 +9,14 @@ video.setAttribute("playsinline", "");
 
 let handLandmarker = null;
 let gestureRecognizer = null;
+let cameraStream = null;
+let isRunning = false;
+let cameraEnabled = true;
 
 const GESTURE_HOLD_TIME = {
     Pointing_Up: 400,
     Closed_Fist: 400,
-    PINCH: 600
+    PINCH: 400
 };
 
 let activeGesture = null;
@@ -32,9 +35,8 @@ let lastScrollY = 0;
 let lastScrollDirection = null;
 let pinchStartTime = null;
 let pinchTriggered = false;
-const PINCH_HOLD_TIME = 500;
+const PINCH_HOLD_TIME = 400;
 
-// Flag to prevent event loop
 let isInternalChange = false;
 
 export function setCursorModeActive(active) {
@@ -52,7 +54,6 @@ export function setCursorModeActive(active) {
     isInternalChange = false;
 }
 
-// Listen for external cursor mode changes (from UI clicks)
 window.addEventListener('cursorModeChanged', (e) => {
     if (isInternalChange) return;
 
@@ -65,10 +66,9 @@ window.addEventListener('cursorModeChanged', (e) => {
     }
 });
 
-
 async function initGestureEngineHome() {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = cameraStream;
     await video.play();
 
     const vision = await FilesetResolver.forVisionTasks(
@@ -93,8 +93,52 @@ async function initGestureEngineHome() {
         numHands: 1
     });
 
+    isRunning = true;
     requestAnimationFrame(loop);
 }
+
+async function stopCamera() {
+    isRunning = false;
+    cameraEnabled = false;
+
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    video.srcObject = null;
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) cursor.style.display = "none";
+
+    cursorModeActive = false;
+}
+
+async function startCamera() {
+    if (cameraEnabled && isRunning) return;
+
+    cameraEnabled = true;
+
+    if (!handLandmarker || !gestureRecognizer) {
+        await initGestureEngineHome();
+        return;
+    }
+
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = cameraStream;
+    await video.play();
+
+    isRunning = true;
+    requestAnimationFrame(loop);
+}
+
+window.addEventListener('cameraToggle', async (e) => {
+    const enabled = e.detail.enabled;
+    if (enabled) {
+        await startCamera();
+    } else {
+        await stopCamera();
+    }
+});
 
 function dispatchGestureFeedback(name) {
     document.dispatchEvent(
@@ -113,8 +157,6 @@ function resetGestureHold() {
 function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 400;
 
-    dispatchGestureFeedback(gestureName);
-
     if (activeGesture !== gestureName) {
         activeGesture = gestureName;
         gestureStartTime = now;
@@ -132,7 +174,7 @@ function isPinch(lm) {
     const dx = lm[4].x - lm[8].x;
     const dy = lm[4].y - lm[8].y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < 0.04;
+    return distance < 0.055;
 }
 
 function mapHandToScreen(handX, handY) {
@@ -177,7 +219,6 @@ function handleVideoInteraction(x, y) {
     return true;
 }
 
-
 function isTwoFingersUp(lm) {
     const indexUp = lm[8].y < lm[6].y;
     const middleUp = lm[12].y < lm[10].y;
@@ -214,7 +255,6 @@ function handleTwoFingerScroll(lm) {
     if (Math.abs(delta) < 0.0015) return;
     const scrollAmount = -delta * 800;
 
-    // Dispatch feedback for scroll direction
     const scrollDirection = delta < 0 ? "SCROLL_UP" : "SCROLL_DOWN";
     if (scrollDirection !== lastScrollDirection) {
         dispatchGestureFeedback(scrollDirection);
@@ -259,7 +299,6 @@ function processCursorMode(lm) {
         if (cursor) cursor.style.transform = "scale(1)";
     }
 
-
     if (isTwoFingersUp(lm)) {
         handleTwoFingerScroll(lm);
     } else {
@@ -268,19 +307,25 @@ function processCursorMode(lm) {
     }
 }
 
+const FEEDBACK_GESTURES = new Set([
+    "Closed_Fist",
+    "Pointing_Up"
+]);
 
 function loop() {
-    const now = performance.now();
+    if (!isRunning || !cameraEnabled) return;
 
-    // ===============================
-    // 1️⃣ GestureRecognizer
-    // ===============================
+    const now = performance.now();
 
     const gestureResult =
         gestureRecognizer.recognizeForVideo(video, now);
 
     const topGesture =
         gestureResult.gestures?.[0]?.[0] || null;
+
+    if (topGesture && topGesture.score > 0.6 && FEEDBACK_GESTURES.has(topGesture.categoryName)) {
+        dispatchGestureFeedback(topGesture.categoryName);
+    }
 
     if (topGesture?.categoryName === "Pointing_Up" && topGesture.score > 0.7) {
         setCursorModeActive(true);
@@ -316,10 +361,6 @@ function loop() {
         return;
     }
 
-    // ===============================
-    // 2️⃣ HandLandmarker (PINCH)
-    // ===============================
-
     if (!result.landmarks || result.landmarks.length === 0) {
         resetGestureHold();
         requestAnimationFrame(loop);
@@ -337,4 +378,11 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-await initGestureEngineHome();
+const storedCameraEnabled = localStorage.getItem('cameraEnabled') !== 'false';
+if (storedCameraEnabled) {
+    await initGestureEngineHome();
+} else {
+    cameraEnabled = false;
+    isRunning = false;
+}
+

@@ -1,6 +1,4 @@
-// ===============================
-// Gesture Mode Controller – Home
-// ===============================
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
@@ -12,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let gestureLock = false;
 
     let gestureClearTimeout = null;
-
 
     const gestureEmojis = {
         'Pointing_Up': '☝️',
@@ -38,16 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
         gestureBadge.innerHTML = `<span>${emoji} ${displayName}</span>`;
         gestureBadge.style.display = "block";
 
-        // ⏱️ Reset Timer
         if (gestureClearTimeout) {
             clearTimeout(gestureClearTimeout);
         }
 
         gestureClearTimeout = setTimeout(() => {
             clearGestureBadge();
-        }, 400); // 300–500ms fühlt sich gut an
+        }, 400);
     }
-
 
     function clearGestureBadge() {
         gestureBadge.innerHTML = '';
@@ -57,10 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('gestureDetected', (event) => {
         displayRecognizedGesture(event.detail.gestureName);
     });
-
-    // ===========================
-    // UI SWITCH FUNCTIONS
-    // ===========================
 
     function activateCursorMode() {
         if (cursorModeActive) return;
@@ -94,10 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    // ===========================
-    // GESTURE HANDLING
-    // ===========================
-
     function handleGesture(gesture) {
         if (!gesture) return;
         if (gestureLock && gesture !== "Closed_Fist") return;
@@ -113,11 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ===========================
-    // EVENT LISTENER
-    // ===========================
-
     window.addEventListener("gesture", (e) => {
         handleGesture(e.detail.name);
     });
 });
+

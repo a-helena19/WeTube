@@ -4,15 +4,14 @@ import {
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs";
 
-// ===============================
-// CAMERA (hidden)
-// ===============================
-
 const video = document.createElement("video");
 video.setAttribute("playsinline", "");
 
 let handLandmarker = null;
 let gestureRecognizer = null;
+let cameraStream = null;
+let isRunning = false;
+let cameraEnabled = true;
 let cursorModeActive = false;
 let cursorX = 0.5;
 let cursorY = 0.5;
@@ -25,7 +24,7 @@ let twoFingerScrollActive = false;
 let lastScrollY = 0;
 let pinchStartTime = null;
 let pinchTriggered = false;
-const PINCH_HOLD_TIME = 500;
+const PINCH_HOLD_TIME = 400;
 
 const GESTURE_HOLD_TIME = {
     Open_Palm: 500,
@@ -40,7 +39,7 @@ const GESTURE_HOLD_TIME = {
 
 const GESTURE_REPEAT = {
     Thumb_Up: {
-        interval: 150 // ms
+        interval: 150
     },
     Thumb_Down: {
         interval: 150
@@ -57,13 +56,13 @@ const FOUR_FINGER_SEEK_REPEAT_INTERVAL = 150;
 
 let fourFingerSeekStartTime = null;
 let fourFingerLastRepeatTime = null;
-let fourFingerActiveDirection = null; // "FORWARD" | "BACKWARD"
+let fourFingerActiveDirection = null;
 
 const ILY_NAV_HOLD_TIME = 500;
 
 let ilyNavStartTime = null;
 let ilyNavTriggered = false;
-let ilyNavDirection = null; // "NEXT" | "BACK"
+let ilyNavDirection = null;
 
 const OPEN_PALM_FULLSCREEN_HOLD = 500;
 
@@ -75,7 +74,6 @@ let pinchRestartStartTime = null;
 let pinchRestartTriggered = false;
 const PINCH_RESTART_HOLD_TIME = 600;
 
-// Flag to prevent event loop
 let isInternalChange = false;
 
 export function setCursorModeActive(active) {
@@ -93,7 +91,6 @@ export function setCursorModeActive(active) {
     isInternalChange = false;
 }
 
-// Listen for external cursor mode changes (from UI clicks)
 window.addEventListener('cursorModeChanged', (e) => {
     if (isInternalChange) return;
 
@@ -107,8 +104,8 @@ window.addEventListener('cursorModeChanged', (e) => {
 });
 
 async function initGestureEngine() {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = cameraStream;
     await video.play();
 
     const vision = await FilesetResolver.forVisionTasks(
@@ -133,12 +130,53 @@ async function initGestureEngine() {
         numHands: 1
     });
 
+    isRunning = true;
     requestAnimationFrame(loop);
 }
 
-// ===============================
-// HELPERS
-// ===============================
+async function stopCamera() {
+    isRunning = false;
+    cameraEnabled = false;
+
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    video.srcObject = null;
+
+    const cursor = document.getElementById("virtual-cursor");
+    if (cursor) cursor.style.display = "none";
+
+    cursorModeActive = false;
+}
+
+async function startCamera() {
+    if (cameraEnabled && isRunning) return;
+
+    cameraEnabled = true;
+
+    if (!handLandmarker || !gestureRecognizer) {
+        await initGestureEngine();
+        return;
+    }
+
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = cameraStream;
+    await video.play();
+
+    isRunning = true;
+    requestAnimationFrame(loop);
+}
+
+window.addEventListener('cameraToggle', async (e) => {
+    const enabled = e.detail.enabled;
+    if (enabled) {
+        await startCamera();
+    } else {
+        await stopCamera();
+    }
+});
+
 function isFourFinger(lm) {
     const indexUp  = lm[8].y  < lm[6].y;
     const middleUp = lm[12].y < lm[10].y;
@@ -191,7 +229,6 @@ function dispatchGestureFeedback(name) {
 }
 
 function handleFourFingerSeek(direction, now) {
-    // direction: "FORWARD" | "BACKWARD"
 
     if (fourFingerActiveDirection !== direction) {
         fourFingerActiveDirection = direction;
@@ -206,14 +243,12 @@ function handleFourFingerSeek(direction, now) {
         return;
     }
 
-    // erster Trigger
     if (!fourFingerLastRepeatTime) {
         emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
         fourFingerLastRepeatTime = now;
         return;
     }
 
-    // repeats
     if (now - fourFingerLastRepeatTime >= FOUR_FINGER_SEEK_REPEAT_INTERVAL) {
         emitGesture(direction === "FORWARD" ? "SEEK_FORWARD" : "SEEK_BACKWARD");
         fourFingerLastRepeatTime = now;
@@ -290,8 +325,6 @@ function handleGestureHold(gestureName, now) {
     const holdTime = GESTURE_HOLD_TIME[gestureName] ?? 500;
     const repeatConfig = GESTURE_REPEAT[gestureName];
 
-    dispatchGestureFeedback(gestureName);
-
     if (activeGesture !== gestureName) {
         activeGesture = gestureName;
         gestureStartTime = now;
@@ -302,7 +335,6 @@ function handleGestureHold(gestureName, now) {
 
     const heldTime = now - gestureStartTime;
 
-    // Repeat-Geste (z.B. Lautstärke)
     if (repeatConfig) {
         if (heldTime >= holdTime) {
             if (!lastRepeatTime || now - lastRepeatTime >= repeatConfig.interval) {
@@ -313,7 +345,6 @@ function handleGestureHold(gestureName, now) {
         return;
     }
 
-    // Einmal-Geste
     if (!gestureTriggered && heldTime >= holdTime) {
         emitGesture(gestureName);
         gestureTriggered = true;
@@ -388,7 +419,6 @@ function isTwoFingersUp(lm) {
     return indexUp && middleUp && ringDown && pinkyDown;
 }
 
-
 function handleElementClick(x, y) {
     const el = document.elementFromPoint(x, y);
     if (!el) return;
@@ -420,7 +450,6 @@ function handleTwoFingerScroll(lm) {
     if (Math.abs(delta) < 0.0015) return;
     const scrollAmount = -delta * 900;
 
-    // Dispatch feedback for scroll direction
     const scrollDirection = delta < 0 ? "SCROLL_UP" : "SCROLL_DOWN";
     if (scrollDirection !== lastScrollDirection) {
         dispatchGestureFeedback(scrollDirection);
@@ -432,7 +461,6 @@ function handleTwoFingerScroll(lm) {
         behavior: "auto"
     });
 }
-
 
 function processCursorMode(lm) {
     const pos = mapHandToScreen(lm[8].x, lm[8].y);
@@ -466,7 +494,6 @@ function processCursorMode(lm) {
         if (cursor) cursor.style.transform = "scale(1)";
     }
 
-
     if (isTwoFingersUp(lm)) {
         handleTwoFingerScroll(lm);
     } else {
@@ -475,12 +502,19 @@ function processCursorMode(lm) {
     }
 }
 
-
-// ===============================
-// FRAME LOOP
-// ===============================
+const FEEDBACK_GESTURES = new Set([
+    "Closed_Fist",
+    "Pointing_Up",
+    "Victory",
+    "Thumb_Up",
+    "Thumb_Down",
+    "Open_Palm",
+    "SHAKA"
+]);
 
 function loop() {
+    if (!isRunning || !cameraEnabled) return;
+
     const now = performance.now();
 
     const gestureResult =
@@ -489,6 +523,14 @@ function loop() {
     const topGesture =
         gestureResult.gestures?.[0]?.[0] || null;
 
+    const result = handLandmarker.detectForVideo(video, now);
+
+    const isTwoFingers = result.landmarks?.length > 0 && isTwoFingersUp(result.landmarks[0]);
+
+    if (topGesture && topGesture.score > 0.6 && FEEDBACK_GESTURES.has(topGesture.categoryName) && !isTwoFingers) {
+        dispatchGestureFeedback(topGesture.categoryName);
+    }
+
     if (topGesture?.categoryName === "Pointing_Up" && topGesture.score > 0.7) {
         setCursorModeActive(true);
     }
@@ -496,8 +538,6 @@ function loop() {
     if (topGesture?.categoryName === "Closed_Fist" && topGesture.score > 0.7) {
         setCursorModeActive(false);
     }
-
-    const result = handLandmarker.detectForVideo(video, now);
 
     if (cursorModeActive && result.landmarks?.length) {
         processCursorMode(result.landmarks[0]);
@@ -548,6 +588,7 @@ function loop() {
 
     if (isShaka(lm)) {
         handleGestureHold("SHAKA", now);
+        dispatchGestureFeedback("SHAKA");
     } else {
         resetGestureHold();
     }
@@ -589,4 +630,11 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-await initGestureEngine();
+const storedCameraEnabled = localStorage.getItem('cameraEnabled') !== 'false';
+if (storedCameraEnabled) {
+    await initGestureEngine();
+} else {
+    cameraEnabled = false;
+    isRunning = false;
+}
+

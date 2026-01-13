@@ -8,4 +8,5 @@ public interface VideoRepository {
     Optional<Video> findById(Long id);
     List<Video> findAll();
     List<Video> findAllRandom();
+    List<Video> searchByQuery(String query);
 }

@@ -57,7 +57,7 @@ a:hover {
 
 .search-bar {
     position: absolute;
-    left: 40%;
+    left: 35%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
@@ -144,6 +144,118 @@ a:hover {
     width: 100%;
 }
 
+.content.camera-disabled {
+    grid-template-columns: 1fr 510px;
+}
+
+.content.camera-disabled .left-column .video-grid {
+    display: none;
+}
+
+.content.camera-disabled .video-recommendations {
+    display: flex;
+}
+
+.video-recommendations {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.video-page .video-recommendations .video-card-link {
+    display: block;
+    text-decoration: none;
+}
+
+.video-page .video-recommendations .video-card {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: visible;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 8px;
+    align-items: flex-start;
+}
+
+.video-page .video-recommendations .video-card:hover {
+    background: #fafafa;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.video-page .video-recommendations .thumbnail-wrapper {
+    flex-shrink: 0;
+    width: 168px;
+    min-width: 168px;
+    height: 94px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-page .video-recommendations .thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.video-page .video-recommendations .duration-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.video-page .video-recommendations .video-info {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start;
+    padding: 4px 0 !important;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.video-page .video-recommendations .video-title {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    margin: 0 0 3px 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    color: #0f0f0f !important;
+    text-overflow: ellipsis;
+}
+
+.video-page .video-recommendations .creator-name {
+    font-size: 12px !important;
+    color: #606060 !important;
+    margin: 0 0 2px 0 !important;
+    line-height: 1.3 !important;
+}
+
+.video-page .video-recommendations .video-details {
+    font-size: 12px !important;
+    color: #606060 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+    display: block !important;
+}
+
 .left-column {
     flex: 1;
     display: flex;
@@ -163,9 +275,43 @@ a:hover {
     margin-bottom: 8px;
 }
 
+.video-page .creator-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.video-page .creator-avatar-large {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .video-page .video-details-large {
     font-size: 14px;
     color: #606060;
+    margin: 0;
+}
+
+.video-page .video-info-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.video-page .creator-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.video-page .video-meta {
+    flex: 1;
+    min-width: 0;
 }
 
 .video-page .video-grid {
@@ -231,7 +377,7 @@ a:hover {
 .video-page .video-title {
     font-size: 14px;
     font-weight: 500;
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     color: #0f0f0f;
     line-height: 1.4;
     display: -webkit-box;
@@ -239,6 +385,13 @@ a:hover {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.video-page .creator-name {
+    font-size: 12px;
+    color: #606060;
+    margin: 0 0 2px 0;
+    line-height: 1.3;
 }
 
 .video-page .video-details {
@@ -283,7 +436,6 @@ a:hover {
     margin: 0 0 12px 0;
 }
 
-/* Video Description Box */
 .video-description-box {
     background: #f9f9f9;
     border-radius: 12px;
@@ -651,10 +803,6 @@ a:hover {
     background: #e7000b;
 }
 
-/* =========================
-   FAKE FULLSCREEN MODE
-   ========================= */
-
 body.fake-fullscreen-active {
     overflow: hidden;
 }
@@ -688,7 +836,6 @@ body.fake-fullscreen-active {
     border-radius: 0;
 }
 
-/* Time-Display als Overlay über dem Video */
 .video-player-container.fake-fullscreen .time-display {
     position: absolute;
     bottom: 70px;
@@ -702,7 +849,6 @@ body.fake-fullscreen-active {
     font-size: 14px;
 }
 
-/* Progress-Bar als Overlay über dem Video */
 .video-player-container.fake-fullscreen .progress-container {
     position: absolute;
     bottom: 56px;
@@ -751,7 +897,6 @@ body.fake-fullscreen-active {
     border-color: #ff1a1a;
 }
 
-/* Gesture Badge im Fullscreen oben rechts */
 .fullscreen-gesture-badge {
     position: fixed;
     top: 20px;
@@ -774,10 +919,6 @@ body.fake-fullscreen-active {
     display: none;
 }
 
-/* =========================
-   VIDEO PLAYER CONTROLS
-   ========================= */
-
 .controls {
     display: flex;
     align-items: center;
@@ -789,7 +930,6 @@ body.fake-fullscreen-active {
     width: 98%;
 }
 
-/* Spacer vor rechter Gruppe */
 #mute {
     margin-left: auto;
 }
@@ -803,12 +943,10 @@ body.fake-fullscreen-active {
     background: #d1d5db;
 }
 
-/* Volume & Fullscreen dicht zusammen */
 #volume-grid, #fullscreen {
     margin-left: 4px;
 }
 
-/* Alle Buttons */
 .controls button {
     background: white;
     border: 1px solid #d1d5db;
@@ -824,18 +962,15 @@ body.fake-fullscreen-active {
     justify-content: center;
 }
 
-/* Hover */
 .controls button:hover {
     background: #f3f4f6;
     border-color: #9ca3af;
 }
 
-/* Active (Klick) */
 .controls button:active {
     transform: scale(0.95);
 }
 
-/* Play Button etwas hervorheben */
 #play {
     background: #111827;
     color: white;
@@ -847,7 +982,6 @@ body.fake-fullscreen-active {
     border-color: #e7000b;
 }
 
-/* Lautstärke Slider */
 .controls input[type="range"] {
     width: 90px;
     height: 3px;
@@ -855,7 +989,6 @@ body.fake-fullscreen-active {
     cursor: pointer;
 }
 
-/* Fullscreen Button leicht größer */
 #fullscreen {
     font-size: 13px;
 }
@@ -868,11 +1001,10 @@ body.fake-fullscreen-active {
     padding: 0 3px;
 }
 
-/* einzelne Stufe */
 .volume-step {
     width: 6px;
     border-radius: 2px;
-    background: #d1d5db; /* neutral grau */
+    background: #d1d5db;
     cursor: pointer;
     transition:
             background-color 0.15s ease,
@@ -880,20 +1012,17 @@ body.fake-fullscreen-active {
             box-shadow 0.15s ease;
 }
 
-/* Höhen */
 .volume-step:nth-child(1) { height: 20%; }
 .volume-step:nth-child(2) { height: 40%; }
 .volume-step:nth-child(3) { height: 60%; }
 .volume-step:nth-child(4) { height: 80%; }
 .volume-step:nth-child(5) { height: 100%; }
 
-/* Hover (Cursor sichtbar, aber nicht dominant) */
 .volume-step:hover {
     background: #9ca3af;
     transform: scaleY(1.15);
 }
 
-/* Aktive Lautstärke */
 .volume-step.active {
     background: #c63e3e;
     box-shadow: 0 0 6px rgb(163, 36, 36);
@@ -920,10 +1049,9 @@ body.fake-fullscreen-active {
     position: absolute;
     inset: 0;
     width: 0%;
-    background: #e7000b; /* WeTube Rot */
+    background: #e7000b;
 }
 
-/* Hover – größer für Cursor */
 .progress-container:hover {
     height: 10px;
 }

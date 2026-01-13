@@ -7,17 +7,38 @@ const videoActions = initVideoActions(videoEl, feedbackEl);
 
 let seekCount = 0;
 let lastSeekTime = 0;
+let cumulativeSeek = 0;
 
 const SEEK_RESET_TIME = 800;
 const SMALL_SEEK = 10;
 const LARGE_SEEK = 60;
 const SEEK_THRESHOLD = 6;
 
+function updateProgressAndTime() {
+    const progressPlayed = document.querySelector(".progress-played");
+    const timeDisplay = document.getElementById("time-display");
+
+    if (progressPlayed && videoEl.duration) {
+        const percent = (videoEl.currentTime / videoEl.duration) * 100;
+        progressPlayed.style.width = `${percent}%`;
+    }
+
+    if (timeDisplay && videoEl.duration) {
+        const formatTime = (sec) => {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60).toString().padStart(2, "0");
+            return `${m}:${s}`;
+        };
+        timeDisplay.textContent = `${formatTime(videoEl.currentTime)} / ${formatTime(videoEl.duration)}`;
+    }
+}
+
 window.seekVideo = function (direction) {
     const now = performance.now();
 
     if (now - lastSeekTime > SEEK_RESET_TIME) {
         seekCount = 0;
+        cumulativeSeek = 0;
     }
 
     seekCount++;
@@ -26,12 +47,16 @@ window.seekVideo = function (direction) {
     const step = seekCount > SEEK_THRESHOLD ? LARGE_SEEK : SMALL_SEEK;
     const delta = direction === "forward" ? step : -step;
 
+    cumulativeSeek += delta;
+
     videoEl.currentTime = Math.min(
         Math.max(0, videoEl.currentTime + delta),
         videoEl.duration || Infinity
     );
 
-    videoActions.showSeekFeedback(delta);
+    updateProgressAndTime();
+
+    videoActions.showSeekFeedback(cumulativeSeek);
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -40,6 +65,96 @@ document.addEventListener("DOMContentLoaded", () => {
     const gestureControls = document.getElementById("gesture-controls");
     const cursorControls = document.getElementById("cursor-controls");
     const modeBadge = document.getElementById("mode-badge");
+    const sidebar = document.getElementById("sidebar");
+    const cameraLockBadge = document.getElementById("camera-lock");
+    const gestureBadge = document.getElementById("gesture-badge");
+    const content = document.querySelector(".content");
+    const videoRecommendations = document.getElementById("video-recommendations");
+
+    let cameraEnabled = localStorage.getItem('cameraEnabled') !== 'false';
+
+    function updateCameraLockUI() {
+
+        localStorage.setItem('cameraEnabled', cameraEnabled);
+
+        if (cameraLockBadge) {
+            if (cameraEnabled) {
+                cameraLockBadge.innerHTML = '<span>🔓 Disable Camera & Gestures</span>';
+                cameraLockBadge.style.background = 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)';
+                cameraLockBadge.style.borderColor = '#93C5FD';
+                cameraLockBadge.style.color = '#1D4ED8';
+            } else {
+                cameraLockBadge.innerHTML = '<span>🔒 Enable Camera & Gestures</span>';
+                cameraLockBadge.style.background = 'linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%)';
+                cameraLockBadge.style.borderColor = '#FECACA';
+                cameraLockBadge.style.color = '#DC2626';
+            }
+        }
+
+        if (sidebar) {
+            sidebar.style.display = cameraEnabled ? 'block' : 'none';
+        }
+        if (modeBadge) {
+            modeBadge.style.display = cameraEnabled ? 'flex' : 'none';
+        }
+        if (gestureBadge) {
+            gestureBadge.style.display = 'none';
+        }
+
+        if (videoRecommendations) {
+            videoRecommendations.style.display = cameraEnabled ? 'none' : 'flex';
+        }
+
+        if (content) {
+            if (cameraEnabled) {
+                content.classList.remove('camera-disabled');
+            } else {
+                content.classList.add('camera-disabled');
+            }
+        }
+    }
+
+    if (cameraLockBadge) {
+        cameraLockBadge.style.cursor = 'pointer';
+        cameraLockBadge.addEventListener('click', () => {
+            cameraEnabled = !cameraEnabled;
+            updateCameraLockUI();
+
+            window.dispatchEvent(new CustomEvent('cameraToggle', {
+                detail: { enabled: cameraEnabled }
+            }));
+        });
+    }
+
+    updateCameraLockUI();
+
+    window.dispatchEvent(new CustomEvent('cameraToggle', {
+        detail: { enabled: cameraEnabled }
+    }));
+
+    const searchInput = document.querySelector(".search-input");
+    const searchButton = document.querySelector(".search-button");
+
+    function performSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            window.location.href = `/home?search=${encodeURIComponent(query)}`;
+        } else {
+            window.location.href = '/home';
+        }
+    }
+
+    if (searchButton) {
+        searchButton.addEventListener("click", performSearch);
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                performSearch();
+            }
+        });
+    }
 
     const backBtnControl = document.querySelector(".video-back");
     const nextBtnControl = document.querySelector(".video-next");
@@ -93,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
         timeDisplay.textContent =
             `${formatTime(videoEl.currentTime)} / ${formatTime(videoEl.duration)}`;
     });
-
 
     if (backBtnControl) {
         backBtnControl.addEventListener("click", () => {
@@ -180,7 +294,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-
     function switchToPointingMode() {
         gestureControls.classList.add("hidden");
         cursorControls.classList.remove("hidden");
@@ -215,7 +328,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("cursorModeChanged", (e) => {
         const active = e.detail.active;
 
-        // Update UI state
         window.uiState.cursorModeActive = active;
 
         if (active) {
@@ -234,7 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-
 
     activateCursorModeBtn.addEventListener("click", switchToPointingMode);
     endCursorModeBtn.addEventListener("click", switchToGestureMode);
@@ -260,7 +371,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modeBadge.style.transform = "scale(1)";
         });
     }
-
 
     btnRestart.onclick = () => {
         videoEl.currentTime = 0;
@@ -324,9 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     videoEl.addEventListener("volumechange", updateVolumeGrid);
     updateVolumeGrid();
 
-
     btnFullscreen.onclick = () => toggleFakeFullscreen();
-
 
     function toggleFakeFullscreen() {
         const videoPlayerContainer = document.querySelector(".video-player-container");
@@ -339,7 +447,6 @@ document.addEventListener("DOMContentLoaded", () => {
         videoPlayerContainer.classList.toggle("fake-fullscreen", state.fakeFullscreenActive);
         document.body.classList.toggle("fake-fullscreen-active", state.fakeFullscreenActive);
 
-        // Fullscreen Gesture Badge erstellen/entfernen
         manageFullscreenGestureBadge(state.fakeFullscreenActive);
     }
 
@@ -356,7 +463,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.appendChild(fullscreenBadge);
             }
 
-            // Observer für das Original-Badge
             const observer = new MutationObserver(() => {
                 if (originalBadge && originalBadge.style.display !== "none" && originalBadge.innerHTML) {
                     fullscreenBadge.innerHTML = originalBadge.innerHTML;
