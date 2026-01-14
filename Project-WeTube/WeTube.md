@@ -150,7 +150,7 @@ A preview of the application is shown below. The recognized gesture is displayed
 ## Links & Resources
 - Repository: https://github.com/a-helena19/WeTube.git
 - Local execution in web browser
-- Zip: ![Project-ZIP](assets/WeTube.zip)
+- Zip: 
 - Report/PDF: assets/project-report.pdf
 
 

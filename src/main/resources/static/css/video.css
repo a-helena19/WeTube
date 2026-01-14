@@ -838,7 +838,7 @@ body.fake-fullscreen-active {
 
 .video-player-container.fake-fullscreen .time-display {
     position: absolute;
-    bottom: 110px;
+    bottom: 80px;
     left: 16px;
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
