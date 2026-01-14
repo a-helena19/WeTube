@@ -1,0 +1,89 @@
+---
+title: "Project Post Template"
+description: "Post description"
+author:
+  - name: Author One
+  - name: Author Two
+date: "11/27/2025"
+date-modified: now
+image: "assets/thumbnail.png"
+categories:
+  - code
+  - analysis
+  - WiSe2025/2026
+other-links:     
+  - text: Template Download
+    href: assets/project-template.zip
+    icon: file-zip
+resources:
+  - assets/project-template.zip
+---
+
+## Overview
+
+Briefly introduce the project in 2–4 sentences. State the problem, the context (course or domain), and the key outcome/result. Keep it punchy and non-technical at first.
+
+## Objectives
+
+- What did you aim to achieve? List 2–4 concrete goals or research questions.
+- Mention relevant constraints (time, hardware, dataset, team size).
+
+## Approach & Architecture
+
+Describe your overall approach and the system architecture. Include a diagram if helpful.
+
+![System Architecture](assets/test-figure.png)
+
+Suggested details:
+
+- High-level components and how they interact
+- Key algorithms, models, or patterns used
+- Important design decisions and their rationale
+
+## Implementation
+
+Summarize the tech stack and notable implementation details.
+
+- Languages, frameworks, libraries
+- Data sources and preprocessing
+- Deployment/runtime environment (local, cloud, edge)
+- Any automation, CI, or testing you adopted
+
+## Results & Evaluation
+
+Present your results with metrics, screenshots, or short clips. Provide concise interpretation:
+
+- How did you measure success? (accuracy, latency, user feedback, etc.)
+- What worked well? Where did it fall short?
+- If applicable, include small tables/plots or link to more details.
+
+## Challenges & Lessons Learned
+
+Reflect on the main challenges and what you’d do differently next time.
+
+## Future Work
+
+List feasible next steps, improvements, or extensions.
+
+## Links & Resources
+
+- Repository: <https://example.com/repo>
+- Demo: <https://example.com/demo>
+- Report/PDF: assets/project-report.pdf
+
+## Writing recommendations
+
+- Lead with a concise summary (2–4 sentences) before diving into details.
+- Prefer clear headings, short paragraphs, and bullet lists; avoid walls of text.
+- Use figures and diagrams to explain architecture and results; add alt text.
+- Cite sources and related work when relevant; link to repos and demos.
+- Keep media in `assets/` and reference with relative paths (e.g., `assets/figure.png`).
+- Optimize images (size and format) and avoid sensitive or confidential content.
+- Add 3–8 specific categories in the front matter (technologies, topics) to improve discoverability.
+- Include a license for shared code/media (e.g., CC BY 4.0, MIT) when appropriate.
+
+::: {.callout-tip}
+Aim for clarity over completeness. Readers should grasp what you built, why it matters, and what you learned within a couple of minutes.
+:::
+
+
