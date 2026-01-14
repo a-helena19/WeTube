@@ -25,7 +25,7 @@ other-links:
     icon: github
 resources:
   - assets/WeTube.zip
-  - assets/project-report.pdf
+  - assets/Projektdokumentation_WeTube.pdf
 ---
 ## Overview
 WeTube is a gesture-controlled video application that allows interaction with a YouTube-like interface from a distance.
@@ -156,4 +156,4 @@ A preview of the application is shown below. The recognized gesture is displayed
 - Repository: https://github.com/a-helena19/WeTube.git
 - Local execution in web browser
 - Zip: assets/WeTube.zip
-- Report/PDF: assets/project-report.pdf
+- Report/PDF: assets/Projektdokumentation_WeTube.pdf
