@@ -637,8 +637,9 @@ function loop() {
 
     const isTwoFingers = result.landmarks?.length > 0 && isTwoFingersUp(result.landmarks[0]);
     const isVictoryGesture = topGesture?.categoryName === "Victory" && topGesture.score > 0.6;
+    const suppressVictoryInCursorMode = cursorModeActive && isTwoFingers && isVictoryGesture;
 
-    if (topGesture && topGesture.score > 0.6 && FEEDBACK_GESTURES.has(topGesture.categoryName) && (!isTwoFingers || isVictoryGesture)) {
+    if (topGesture && topGesture.score > 0.6 && FEEDBACK_GESTURES.has(topGesture.categoryName) && !suppressVictoryInCursorMode && (!isTwoFingers || isVictoryGesture)) {
         dispatchGestureFeedback(topGesture.categoryName);
     }
 
