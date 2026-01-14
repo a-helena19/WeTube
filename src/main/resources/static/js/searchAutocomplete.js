@@ -47,9 +47,10 @@
             border-radius: 0 0 20px 20px;
             max-height: 300px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 1001;
             display: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            width: 650px;
         `;
 
         searchBar.style.position = 'relative';
@@ -108,9 +109,9 @@
                     gap: 10px;
                     border-bottom: 1px solid #333;
                     transition: background-color 0.15s ease;
-                    font-size: 13px;
+                    font-size: 12px;
                 ">
-                    <svg xmlns="http:
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
                         <path fill="#888" d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/>
                     </svg>
                     <span style="color: #fff;">${highlighted}</span>
