@@ -393,6 +393,8 @@ a:hover {
     width: 14px;
     height: 14px;
     transform: translate(-50%, -50%);
+    will-change: transform;
+    transition: transform 0.02s linear;
     background: red;
     border-radius: 50%;
     z-index: 9999;

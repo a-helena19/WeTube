@@ -427,6 +427,15 @@ function loop() {
 
     const result = handLandmarker.detectForVideo(video, now);
 
+    if (
+        topGesture &&
+        topGesture.categoryName === "Closed_Fist" &&
+        topGesture.score > 0.6
+    ) {
+        handleGestureHold("Closed_Fist", now);
+    }
+
+
     if (window.cursorModeActive && result.landmarks?.length) {
         processCursorMode(result.landmarks[0]);
         requestAnimationFrame(loop);
