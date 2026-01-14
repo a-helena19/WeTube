@@ -24,7 +24,7 @@ other-links:
     href: https://github.com/a-helena19/WeTube.git
     icon: github
 resources:
-  - assets/WeTube.zip
+  - assets/WeTube.zip 
   - assets/project-report.pdf
 ---
 ## Overview
@@ -67,8 +67,7 @@ Design Decisions:
 - Two modes (Gesture Mode and Cursor Mode) were introduced to reduce accidental activation.
 - One-second gesture holding time was added to prevent unintended triggers.
 - A custom video player was implemented to ensure compatibility with the virtual cursor.
-- A Gesture Feedback Badge was implemented to provide immediate visual feedback when a gesture is recognized.
-  This feedback reduced uncertainty and improved transparency of system behavior.
+- A Gesture Feedback Badge was implemented to provide immediate visual feedback when a gesture is recognized. This feedback reduced uncertainty and improved transparency of system behavior.
 
 ## Implementation
 Languages, frameworks and tools:
@@ -116,16 +115,22 @@ Limitations:
 - Recognition accuracy decreased in poor lighting or complex backgrounds.
 - Accidental gesture triggering cannot be fully eliminated, as user intent cannot be reliably inferred.
 
-Present your results with metrics, screenshots, or short clips. Provide concise interpretation:
 A preview of the application is shown below. The recognized gesture is displayed in the top-left corner as feedback to the user.
 - Gesture Mode: Direct gesture control of video functions.
   ![WeTube Gesture Mode](assets/WeTube-GestureMode.png)
 
+
 - Cursor Mode: Hand movement controls a virtual cursor for more precise interaction. Available on Homepage and Video Page.
   ![WeTube Cursor Mode](assets/WeTube-CursorMode.png)
 
+
+- Fullscreen Mode activated via Open Palm gesture.
+  ![WeTube Cursor Mode](assets/WeTube-FullScreen.png)
+
+
 - Video Page without Gesture & Cursor Mode
   ![WeTube Interface - camera disabled](assets/WeTube-Interface.png)
+
 
 - Homepage & Search Functionality
   ![WeTube Homepage](assets/WeTube-Homepage.png)
@@ -150,7 +155,5 @@ A preview of the application is shown below. The recognized gesture is displayed
 ## Links & Resources
 - Repository: https://github.com/a-helena19/WeTube.git
 - Local execution in web browser
-- Zip: 
+- Zip: assets/WeTube.zip
 - Report/PDF: assets/project-report.pdf
-
-

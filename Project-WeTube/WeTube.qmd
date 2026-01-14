@@ -7,8 +7,8 @@ author:
   - name: David Fliesser
   - name: Manuel Seubert
 
-date: "14/01/2026"
-date-modified: 14/01/2026
+date: "2026-01-14"
+date-modified: "2026-01-14"
 image: ![WeTube Thumbnail](assets/WeTube-Thumbnail.png)
 categories:
   - HCI
@@ -16,14 +16,17 @@ categories:
   - Gesture Control
   - Computer Vision
   - WiSe2025/2026
-other-links:     
+other-links:
   - text: Project ZIP
-    href: assets/project-template.zip
+    href: assets/WeTube.zip
     icon: file-zip
+  - text: GitHub Repository
+    href: https://github.com/a-helena19/WeTube.git
+    icon: github
 resources:
-  - assets/project-template.zip
+  - assets/WeTube.zip
+  - assets/project-report.pdf
 ---
-
 ## Overview
 WeTube is a gesture-controlled video application that allows interaction with a YouTube-like interface from a distance.
 Users can control core video functions such as playback, navigation and volume using only hand gestures and a standard webcam.
@@ -31,15 +34,15 @@ The result is a functional prototype that demonstrates the feasibility of gestur
 
 ## Objectives
 - To investigate whether gesture-based interaction can reduce reliance on traditional input devices.
-- To evaluate how well gesture control can improve our everyday day e.g. while teaching or cooking
+- To evaluate whether gesture control can improve everyday scenarios (e.g., teaching, cooking).
 - To design gestures that are both robust and intuitive for users.
 - To provide continuous visual feedback to improve user understanding of the system state.
 
-Contraints:
+Constraints:
 - Variability of lighting conditions and backgrounds during testing.
 - Browser-based execution only (no native applications allowed).
 - Limited to hand gestures that can be recognized by a webcam.
-- System behavior varies across different hardware
+- System behavior varies across different hardware devices.
 
 ## Approach & Architecture
 - The interaction concept is based on existing video platforms and is extended with gesture-based control.
@@ -64,8 +67,7 @@ Design Decisions:
 - Two modes (Gesture Mode and Cursor Mode) were introduced to reduce accidental activation.
 - One-second gesture holding time was added to prevent unintended triggers.
 - A custom video player was implemented to ensure compatibility with the virtual cursor.
-- A Gesture Feedback Badge was implemented to provide immediate visual feedback when a gesture is recognized.
-  This feedback reduced uncertainty and improved transparency of system behavior.
+- A Gesture Feedback Badge was implemented to provide immediate visual feedback when a gesture is recognized. This feedback reduced uncertainty and improved transparency of system behavior.
 
 ## Implementation
 Languages, frameworks and tools:
@@ -109,24 +111,30 @@ What worked well:
 - Users were able to learn most gestures quickly.
 - Accuracy decreased for more complex gestures.
 
-Fall short on:
+Limitations:
 - Recognition accuracy decreased in poor lighting or complex backgrounds.
-- Accidental gesture might trigger - can't be fully eliminated. Computer will never truly understand human intent.
+- Accidental gesture triggering cannot be fully eliminated, as user intent cannot be reliably inferred.
 
-Present your results with metrics, screenshots, or short clips. Provide concise interpretation:
 A preview of the application is shown below. The recognized gesture is displayed in the top-left corner as feedback to the user.
 - Gesture Mode: Direct gesture control of video functions.
-![WeTube Gesture Mode](assets/WeTube-GestureMode.png)
+  ![WeTube Gesture Mode](assets/WeTube-GestureMode.png)
+
 
 - Cursor Mode: Hand movement controls a virtual cursor for more precise interaction. Available on Homepage and Video Page.
-![WeTube Cursor Mode](assets/WeTube-CursorMode.png)
+  ![WeTube Cursor Mode](assets/WeTube-CursorMode.png)
+
+
+- Fullscreen Mode activated via Open Palm gesture.
+  ![WeTube Cursor Mode](assets/WeTube-FullScreen.png)
+
 
 - Video Page without Gesture & Cursor Mode
-![WeTube Interface - camera disabled](assets/WeTube-Interface.png)
+  ![WeTube Interface - camera disabled](assets/WeTube-Interface.png)
+
 
 - Homepage & Search Functionality
-![WeTube Homepage](assets/WeTube-Homepage.png)
-![WeTube Interface - camera disabled](assets/WeTube-SearchFunctionality.png)
+  ![WeTube Homepage](assets/WeTube-Homepage.png)
+  ![WeTube Interface - camera disabled](assets/WeTube-SearchFunctionality.png)
 
 ## Challenges & Lessons Learned
 - Gestures typically need to be held for about one second to ensure stable recognition.
@@ -147,6 +155,5 @@ A preview of the application is shown below. The recognized gesture is displayed
 ## Links & Resources
 - Repository: https://github.com/a-helena19/WeTube.git
 - Local execution in web browser
+- Zip: assets/WeTube.zip
 - Report/PDF: assets/project-report.pdf
-
-
