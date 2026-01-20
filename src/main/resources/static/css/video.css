@@ -496,6 +496,10 @@ a:hover {
     border: 1px solid #FECACA;
     border-radius: 16px;
     padding: 16px;
+    position: fixed;
+    top: 90px;
+    right: 2%;
+    left: 64%;
 }
 
 #cursor-controls {
@@ -503,6 +507,10 @@ a:hover {
     border: 1px solid #D8B4FE;
     border-radius: 16px;
     padding: 16px;
+    position: fixed;
+    top: 90px;
+    right: 2%;
+    left: 64%;
 }
 
 .gesture-heading {
