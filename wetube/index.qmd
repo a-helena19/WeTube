@@ -132,7 +132,9 @@ Limitations:
 - Accidental gesture triggering cannot be fully eliminated, as user intent cannot be reliably inferred.
 
 A preview of the application is shown below. The recognized gesture is displayed in the top-left corner as feedback to the user.
+
 - Gesture Mode: Direct gesture control of video functions.
+
   ![](assets/wetube-gesture-mode.png)
 
 
