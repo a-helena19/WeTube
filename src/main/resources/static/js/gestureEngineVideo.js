@@ -50,7 +50,7 @@ let gestureStartTime = null;
 let gestureTriggered = false;
 let lastRepeatTime = null;
 
-const FOUR_FINGER_SEEK_HOLD_TIME = 100;
+const FOUR_FINGER_SEEK_HOLD_TIME = 200;
 const FOUR_FINGER_SEEK_REPEAT_INTERVAL = 150;
 
 let fourFingerSeekStartTime = null;
