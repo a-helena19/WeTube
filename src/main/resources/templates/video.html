@@ -97,15 +97,6 @@
                     <p class="description-text" th:text="${currentVideo.description != null ? currentVideo.description : 'No description available.'}">Video description goes here...</p>
                 </div>
             </div>
-            <div class="video-nav-buttons">
-                <button id="video-back-btn" class="video-nav-btn video-back">
-                    ⏮ Back
-                </button>
-
-                <button id="video-next-btn" class="video-nav-btn video-next">
-                    ⏭ Next
-                </button>
-            </div>
 
 
             <!-- Falls keine Videos gefunden für debugging-->
@@ -228,7 +219,7 @@
             </div>
 
             <div id="cursor-controls" class="hidden">
-                <h2 class="cursor-heading">Pointing Mode</h2>
+                <h2 class="cursor-heading">Cursor Mode</h2>
                 <p class="cursor-text">Control the UI with your index finger</p>
                 <div class="available-gestures-container cursor-gestures">
                     <div class="gesture-row full">

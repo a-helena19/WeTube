@@ -24,10 +24,10 @@ const CURSOR_TRACKING_ZONE = {
 let twoFingerScrollActive = false;
 let pinchStartTime = null;
 let pinchTriggered = false;
-const PINCH_HOLD_TIME = 700;
+const PINCH_HOLD_TIME = 400;
 
 const GESTURE_HOLD_TIME = {
-    Open_Palm: 500,
+    Open_Palm: 600,
     Closed_Fist: 800,
     Pointing_Up: 1200,
     Victory: 500,
@@ -50,7 +50,7 @@ let gestureStartTime = null;
 let gestureTriggered = false;
 let lastRepeatTime = null;
 
-const FOUR_FINGER_SEEK_HOLD_TIME = 100;
+const FOUR_FINGER_SEEK_HOLD_TIME = 200;
 const FOUR_FINGER_SEEK_REPEAT_INTERVAL = 150;
 
 let fourFingerSeekStartTime = null;
@@ -66,7 +66,7 @@ let ilyNavDirection = null;
 let lastScrollFeedbackTime = 0;
 const SCROLL_FEEDBACK_INTERVAL = 200;
 
-const OPEN_PALM_FULLSCREEN_HOLD = 500;
+const OPEN_PALM_FULLSCREEN_HOLD = 600;
 
 let openPalmStartTime = null;
 let openPalmTriggered = false;

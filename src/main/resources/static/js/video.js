@@ -159,9 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const backBtnControl = document.querySelector(".video-back");
     const nextBtnControl = document.querySelector(".video-next");
 
-    const nextBtn = document.getElementById("video-next-btn");
-    const backBtn = document.getElementById("video-back-btn");
-
     const btnRestart = document.getElementById("restart");
     const btnRewind = document.getElementById("rewind");
     const btnPlay = document.getElementById("play");
@@ -217,24 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nextBtnControl) {
         nextBtnControl.addEventListener("click", () => {
-            const nextVideoLink = document.querySelector(
-                ".video-grid .video-card-link"
-            );
-
-            if (nextVideoLink) {
-                window.location.href = nextVideoLink.href;
-            }
-        });
-    }
-
-    if (backBtn) {
-        backBtn.addEventListener("click", () => {
-            window.history.back();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
             const nextVideoLink = document.querySelector(
                 ".video-grid .video-card-link"
             );
