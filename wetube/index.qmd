@@ -9,7 +9,7 @@ author:
 
 date: "2026-01-14"
 date-modified: "2026-01-14"
-image: ![WeTube Thumbnail](assets/wetube-thumbnail.png)
+image: assets/wetube-thumbnail.png
 categories:
   - HCI
   - Web Development
@@ -24,8 +24,8 @@ other-links:
     href: https://github.com/a-helena19/WeTube.git
     icon: github
 resources:
-  - assets/WeTube.zip
-  - assets/Projektdokumentadtion_WeTube.pdf
+  - assets/wetube.zip
+  - assets/projektdokumentation-wetube.pdf
 ---
 ## Overview
 WeTube is a gesture-controlled video application that allows interaction with a YouTube-like interface from a distance.
@@ -117,24 +117,24 @@ Limitations:
 
 A preview of the application is shown below. The recognized gesture is displayed in the top-left corner as feedback to the user.
 - Gesture Mode: Direct gesture control of video functions.
-  ![WeTube Gesture Mode](assets/wetube-gesture-mode.png)
+  assets/wetube-gesture-mode.png
 
 
 - Cursor Mode: Hand movement controls a virtual cursor for more precise interaction. Available on Homepage and Video Page.
-  ![WeTube Cursor Mode](assets/wetube-cursor-mode.png)
+  assets/wetube-cursor-mode.png
 
 
 - Fullscreen Mode activated via Open Palm gesture.
-  ![WeTube Cursor Mode](assets/wetube-full-screen.png)
+  assets/wetube-full-screen.png
 
 
 - Video Page without Gesture & Cursor Mode
-  ![WeTube Interface - camera disabled](assets/wetube-interface.png)
+  assets/wetube-interface.png
 
 
 - Homepage & Search Functionality
-  ![WeTube Homepage](assets/wetube-homepage.png)
-  ![WeTube Interface - camera disabled](assets/wetube-search-functionality.png)
+  assets/wetube-homepage.png
+  assets/wetube-search-functionality.png
 
 ## Challenges & Lessons Learned
 - Gestures typically need to be held for about one second to ensure stable recognition.
@@ -155,5 +155,5 @@ A preview of the application is shown below. The recognized gesture is displayed
 ## Links & Resources
 - Repository: https://github.com/a-helena19/WeTube.git
 - Local execution in web browser
-- Zip: assets/WeTube.zip
-- Report/PDF: assets/Projektdokumentation_WeTube.pdf
+- Zip: assets/wetube.zip
+- Report/PDF: assets/projektdokumentation-wetube.pdf
