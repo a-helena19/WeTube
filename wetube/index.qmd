@@ -18,15 +18,20 @@ categories:
   - WiSe2025/2026
 other-links:
   - text: Project ZIP
-    href: assets/WeTube.zip
+    href: assets/wetube.zip
     icon: file-zip
   - text: GitHub Repository
     href: https://github.com/a-helena19/WeTube.git
     icon: github
+  - text: Report/PDF
+    href: assets/projektdokumentation-wetube.pdf
+    icon: file-pdf
 resources:
   - assets/wetube.zip
   - assets/projektdokumentation-wetube.pdf
 ---
+![](assets/wetube-thumbnail.png){width=80%}
+
 ## Overview
 WeTube is a gesture-controlled video application that allows interaction with a YouTube-like interface from a distance.
 Users can control core video functions such as playback, navigation and volume using only hand gestures and a standard webcam.
@@ -39,6 +44,7 @@ The result is a functional prototype that demonstrates the feasibility of gestur
 - To provide continuous visual feedback to improve user understanding of the system state.
 
 Constraints:
+
 - Variability of lighting conditions and backgrounds during testing.
 - Browser-based execution only (no native applications allowed).
 - Limited to hand gestures that can be recognized by a webcam.
@@ -50,12 +56,14 @@ Constraints:
 - Recognized gestures are mapped to actions such as play, pause, skip and navigation.
 
 Components:
+
 - Camera Input: Captures live video feed of the user.
 - Gesture recognition: hands and landmarks are detected and interpreted.
 - Control mapping: gestures are translated into semantic actions.
 - UI interface: a simplified YouTube-like frontend reacts to commands (HomePage, Search Functionality & Video Player).
 
 Key Algorithms / Models:
+
 - MediaPipe Hands is used for real-time hand tracking and landmark detection.
 - Custom gesture recognition logic is implemented based on landmark positions and movements.
 - Rule-based gesture classification is applied on top of detected landmarks.
@@ -63,6 +71,7 @@ Key Algorithms / Models:
 - Two interaction modes (Gesture Mode and Cursor Mode) are implemented to improve usability.
 
 Design Decisions:
+
 - A limited but reliable gesture set was preferred over many complex gestures.
 - Two modes (Gesture Mode and Cursor Mode) were introduced to reduce accidental activation.
 - One-second gesture holding time was added to prevent unintended triggers.
@@ -71,6 +80,7 @@ Design Decisions:
 
 ## Implementation
 Languages, frameworks and tools:
+
 - JavaScript, HTML and CSS were used for the frontend.
 - A small backend component was implemented in Java using Spring Boot.
 - Google MediaPipe Hands with HandLandmarker was used for real-time hand tracking.
@@ -79,6 +89,7 @@ Languages, frameworks and tools:
 - No automated testing was used due to project scope and time constraints.
 
 Core features implemented:
+
 - Play/Pause: Victory
 - Forward/backward seeking: Swipe right/left with four fingers
 - Previous/next video: IlY right/ILY left
@@ -90,21 +101,25 @@ Core features implemented:
 - Cursor control via hand movement
 
 Data sources and preprocessing:
+
 - Webcam video stream was used as the primary input source.
 - Hand landmarks extracted by MediaPipe were used as the basis for gesture recognition.
 - A cloud database (Neon, PostgreSQL) was used to store pre-saved videos for testing.
 - No external datasets were used.
 
 Deployment and runtime environment:
+
 - The system was designed for local execution only.
 - The application runs in a standard web browser.
 - A standard laptop or desktop with a webcam is sufficient.
 - No specialized hardware or cloud services are required.
 
+
 ## Results & Evaluation
 Evaluation criteria were gesture recognition, responsiveness, system latency and usability.
 
 What worked well:
+
 - Gesture recognition accuracy was satisfactory in controlled lighting conditions.
 - Gestures lead to successful execution of video control commands.
 - System latency was low enough for real-time interaction.
@@ -112,31 +127,33 @@ What worked well:
 - Accuracy decreased for more complex gestures.
 
 Limitations:
+
 - Recognition accuracy decreased in poor lighting or complex backgrounds.
 - Accidental gesture triggering cannot be fully eliminated, as user intent cannot be reliably inferred.
 
 A preview of the application is shown below. The recognized gesture is displayed in the top-left corner as feedback to the user.
 - Gesture Mode: Direct gesture control of video functions.
-  assets/wetube-gesture-mode.png
+  ![](assets/wetube-gesture-mode.png)
 
 
 - Cursor Mode: Hand movement controls a virtual cursor for more precise interaction. Available on Homepage and Video Page.
-  assets/wetube-cursor-mode.png
+  ![](assets/wetube-cursor-mode.png)
 
 
 - Fullscreen Mode activated via Open Palm gesture.
-  assets/wetube-full-screen.png
+  ![](assets/wetube-full-screen.png)
 
 
 - Video Page without Gesture & Cursor Mode
-  assets/wetube-interface.png
+  ![](assets/wetube-interface.png)
 
 
 - Homepage & Search Functionality
-  assets/wetube-homepage.png
-  assets/wetube-search-functionality.png
+  ![](assets/wetube-homepage.png)
+  ![](assets/wetube-search-functionality.png)
 
 ## Challenges & Lessons Learned
+
 - Gestures typically need to be held for about one second to ensure stable recognition.
 - For sensitive gestures, the required holding time was increased to reduce accidental triggers.
 - A two-step activation concept (separate activation gesture) was planned but discarded: it was considered not user-friendly and lead to delays.
@@ -153,7 +170,9 @@ A preview of the application is shown below. The recognized gesture is displayed
 - Hybrid interaction approaches (e.g., gesture and voice input) could be explored.
 
 ## Links & Resources
-- Repository: https://github.com/a-helena19/WeTube.git
+- Repository: <https://github.com/a-helena19/WeTube.git>
 - Local execution in web browser
-- Zip: assets/wetube.zip
-- Report/PDF: assets/projektdokumentation-wetube.pdf
+- Report/PDF:
+
+![](assets/projektdokumentation-wetube.pdf)
+
