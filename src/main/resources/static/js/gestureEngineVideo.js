@@ -24,7 +24,7 @@ const CURSOR_TRACKING_ZONE = {
 let twoFingerScrollActive = false;
 let pinchStartTime = null;
 let pinchTriggered = false;
-const PINCH_HOLD_TIME = 700;
+const PINCH_HOLD_TIME = 400;
 
 const GESTURE_HOLD_TIME = {
     Open_Palm: 600,
